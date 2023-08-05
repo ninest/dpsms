@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      String @id @default(uuid())
+  clerkId String @unique
+
+  hostUser   HostUser? @relation(fields: [hostUserId], references: [id])
+  hostUserId String?   @unique
+
+  tenantUser   TenantUser? @relation(fields: [tenantUserId], references: [id])
+  tenantUserId String?
+
+  moverUser   MoverUser? @relation(fields: [moverUserId], references: [id])
+  moverUserId String?
+
+  address String
+
+  trusting  Trust[] @relation(name: "trust_truster")
+  trustedBy Trust[] @relation(name: "trust_target")
+}
+
+model HostUser {
+  id   String @id @default(uuid())
+  user User[]
+
+  isActive Boolean       @default(true)
+  listings HostListing[]
+}
+
+model TenantUser {
+  id   String @id @default(uuid())
+  user User[]
+
+  requests TenantRequest[]
+
+  tenancies Tenancy[]
+}
+
+model MoverUser {
+  id   String @id @default(uuid())
+  user User[]
+}
+
+model Trust {
+  id String @id @default(uuid())
+
+  truster   User   @relation(fields: [trusterId], references: [id], name: "trust_truster")
+  trusterId String
+
+  target   User   @relation(fields: [targetId], references: [id], name: "trust_target")
+  targetId String
+
+  amountPercent Int
+}
+
+model HostListing {
+  id String @id @default(uuid())
+
+  host       HostUser @relation(fields: [hostUserId], references: [id])
+  hostUserId String
+
+  // Drop off between
+  // dropOff DateTime
+  // pickUp  DateTime
+  timings String
+
+  // Estimated size/dimensions
+  sqft            Int
+  sizeDescription String?
+
+  qualifiers String[] // air conditioning, wet, dry, perishables, sunlight, elevator, security system, locked, self access
+
+  image String?
+
+  tenantRequestListing TenantRequestListing[]
+
+  tenancy Tenancy[]
+}
+
+model TenantRequest {
+  id           String     @id @default(uuid())
+  tenant       TenantUser @relation(fields: [tenantUserId], references: [id])
+  tenantUserId String
+
+  duration Int // in days
+
+  tenantRequestListing TenantRequestListing[]
+}
+
+model TenantRequestListing {
+  id String @id @default(uuid())
+
+  tenantRequest   TenantRequest @relation(fields: [tenantRequestId], references: [id])
+  tenantRequestId String
+
+  hostListing   HostListing @relation(fields: [hostListingId], references: [id])
+  hostListingId String
+
+  startTime DateTime
+
+  hostAccepted   Boolean @default(false)
+  tenantAccepted Boolean @default(false)
+}
+
+model Tenancy {
+  id String @id @default(uuid())
+
+  hostListing   HostListing @relation(fields: [hostListingId], references: [id])
+  hostListingId String
+
+  tenant       TenantUser @relation(fields: [tenantUserId], references: [id])
+  tenantUserId String
+
+  startTime DateTime
+  endTime   DateTime
+}
