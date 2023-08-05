@@ -18,3 +18,7 @@ erDiagram
     TenantRequestListing ||--|| HostListing : "0..*" 
     Tenancy |o--|| HostListing : "0..*" 
 ```
+
+### Commands
+
+- `yarn prisma:generate`: Generate Prisma client

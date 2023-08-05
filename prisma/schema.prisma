@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -42,8 +39,8 @@ model TenantUser {
   user User[]
 
   requests TenantRequest[]
-  
-  tenancies  Tenancy[]
+
+  tenancies Tenancy[]
 }
 
 model MoverUser {
@@ -118,9 +115,9 @@ model Tenancy {
   hostListing   HostListing @relation(fields: [hostListingId], references: [id])
   hostListingId String
 
-  tenant TenantUser @relation(fields: [tenantUserId], references: [id])
+  tenant       TenantUser @relation(fields: [tenantUserId], references: [id])
   tenantUserId String
 
-  startTime    DateTime
-  endTime      DateTime
+  startTime DateTime
+  endTime   DateTime
 }
