@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export default function LoginPage() {
   return (
     <main className="w-3/4 mx-auto my-5">
@@ -27,7 +29,7 @@ export default function LoginPage() {
             className="border p-2 rounded-lg block w-full hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-indigo-600"
           />
         </fieldset>
-        <button>Submit</button>
+        <Button>Login</Button>
       </form>
     </main>
   );
