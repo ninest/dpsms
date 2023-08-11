@@ -1,34 +1,64 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const loginFormSchema = z.object({
+  email: z.string().email("This must be a valid email"),
+  password: z.string(),
+});
+type LoginForm = z.infer<typeof loginFormSchema>;
+
 export default function LoginPage() {
+  const form = useForm<LoginForm>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const onSubmit = form.handleSubmit(async (data) => {
+    console.log(data);
+    alert("Login action here");
+  });
+
   return (
     <main className="w-3/4 mx-auto my-5">
-      <h1 className="text-7xl font-bold mb-10">Login</h1>
+      <h1 className="text-4xl font-black mb-10">Login</h1>
 
-      <form className="space-y-5">
-        <fieldset>
-          <label htmlFor="username" className="font-bold">
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            className="border p-2 rounded-lg block w-full hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-indigo-600"
+      <Form {...form}>
+        <form onSubmit={onSubmit} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="tim@apple.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </fieldset>
-
-        <fieldset>
-          <label htmlFor="password" className="font-bold">
-            Password
-          </label>
-          <input
-            type="password"
+          <FormField
+            control={form.control}
             name="password"
-            id="password"
-            className="border p-2 rounded-lg block w-full hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-indigo-600"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </fieldset>
-        <button>Submit</button>
-      </form>
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
     </main>
   );
 }
