@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "prisma": "prisma",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "db:push": "prisma db push",
+    "db:up": "docker-compose up -d && sleep 2 && PGPASSWORD=password  psql -U user -h localhost -p 2429 -c \"create database dpsms_db;\"",
+    "db:down": "docker-compose down -v "
   },
   "dependencies": {
     "@clerk/nextjs": "^4.23.2",
