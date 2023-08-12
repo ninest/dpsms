@@ -2,6 +2,6 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <main>Page</main>
+    <main>If you are here, you are logged in</main>
   )
 }
