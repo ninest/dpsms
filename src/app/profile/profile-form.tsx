@@ -3,7 +3,8 @@
 import { updateProfileAction } from "@/app/profile/profile-actions";
 import { type ProfileFormData, profileFormSchema } from "@/app/profile/profile-schemas";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +21,7 @@ export function ProfileForm({ initialProfile }: Props) {
       firstName: initialProfile.firstName,
       lastName: initialProfile.lastName,
       address: initialProfile.address,
+      isActiveHost: initialProfile.isActiveHost,
     },
   });
 
@@ -70,6 +72,23 @@ export function ProfileForm({ initialProfile }: Props) {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="isActiveHost"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Active host</FormLabel>
+                  <FormDescription>Check this if you would like to be a host.</FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+
           <Button>Update profile</Button>
         </form>
       </Form>

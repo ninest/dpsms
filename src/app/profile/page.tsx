@@ -7,11 +7,12 @@ export default async function ProfilePage() {
   if (!clerkId) return redirectToSignIn();
 
   const user = await usersService.getUserByClerkId(clerkId);
+  const hasName = !!user.firstName;
 
   return (
     <>
       <main className="p-3">
-        <h1 className="mb-2">{user.firstName}'s Profile</h1>
+        <h1 className="mb-2">{hasName ? `${user.firstName}'s` : "Your"} Profile</h1>
         <ProfileForm initialProfile={user} />
       </main>
     </>

@@ -6,28 +6,27 @@ export const usersService = {
     const clerkUser = await clerkClient.users.getUser(clerkId);
 
     // TODO: move this to after first sign in
-    let dbUser = await prisma.user.findUnique({
+    let dbUser = await prisma.user.findUniqueOrThrow({
       where: {
         clerkId: clerkId,
       },
+      include: {
+        hostUser: true,
+      },
     });
-    if (!dbUser) {
-      dbUser = await prisma.user.create({
-        data: {
-          clerkId,
-          address: "",
-        },
-      });
-    }
 
     return {
       id: dbUser.id,
       firstName: clerkUser.firstName ?? "",
       lastName: clerkUser.lastName ?? "",
       address: dbUser.address,
+      isActiveHost: dbUser.hostUser?.isActive ?? false,
     };
   },
-  async updateUser(userId: string, params: { firstName: string; lastName: string; address: string }) {
+  async updateUser(
+    userId: string,
+    params: { firstName: string; lastName: string; address: string; isActiveHost: boolean }
+  ) {
     // TODO: error handling
     const dbUser = await prisma.user.update({
       where: {
@@ -35,6 +34,16 @@ export const usersService = {
       },
       data: {
         address: params.address,
+        hostUser: {
+          upsert: {
+            update: {
+              isActive: params.isActiveHost,
+            },
+            create: {
+              isActive: params.isActiveHost,
+            },
+          },
+        },
       },
     });
 
