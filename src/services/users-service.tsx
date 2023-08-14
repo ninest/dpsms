@@ -59,4 +59,7 @@ export const usersService = {
       address: dbUser.address,
     };
   },
+  async createUser(params: { email: string; firstName: string; lastName: string; password: string }) {
+    
+  },
 };
