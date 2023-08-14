@@ -1,22 +1,44 @@
-import { SignUpForm, signUpFormSchema } from "@/app/(auth)/auth-schemas";
+"use client";
+
+import { AuthForm, authFormSchema } from "@/app/(auth)/auth-schemas";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function SignUpForm() {
-  const form = useForm<SignUpForm>({
-    resolver: zodResolver(signUpFormSchema),
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const [errorMessage, setErrorMessage] = useState<null | string>(null);
+  const form = useForm<AuthForm>({
+    resolver: zodResolver(authFormSchema),
     defaultValues: {
       email: "",
-      firstName: "",
-      lastName: "",
       password: "",
     },
   });
 
-  const onSubmit = form.handleSubmit(async (data) => {});
+  const onSubmit = form.handleSubmit(async (data) => {
+    try {
+      const result = await signUp?.create({
+        emailAddress: data.email,
+        password: data.password,
+      });
+      console.log(result)
+      if (result?.status === "complete" && result.createdSessionId) {
+        setActive?.({ session: result.createdSessionId });
+      }
+    } catch (error: any) {
+      console.error(error);
+      setErrorMessage(error.errors[0].longMessage);
+    }
+  });
+
+  if (!isLoaded) return null;
 
   return (
     <>
@@ -35,32 +57,7 @@ export function SignUpForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Tim" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Apple" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="password"
@@ -68,12 +65,20 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="tim@apple.com" type="password" {...field} />
+                  <Input type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          {errorMessage && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error in sign up</AlertTitle>
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
           <Button>Create my account</Button>
         </form>
       </Form>
