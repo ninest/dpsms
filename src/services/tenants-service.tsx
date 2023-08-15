@@ -8,6 +8,7 @@ export const tenantsService = {
     params: {
       itemsDescription: string;
       sqft: number;
+      startTime: Date;
       duration: number;
     }
   ) {
@@ -20,16 +21,23 @@ export const tenantsService = {
         duration: params.duration,
         sqft: params.sqft,
         tenant: {
-          connect: {
-            userId: tenantUser.id,
+          connectOrCreate: {
+            where: {
+              userId: tenantUser.id,
+            },
+            create: {
+              userId: tenantUser.id,
+            },
           },
         },
         tenantRequestListing: {
           create: {
-            
-          }
-        }
+            startTime: params.startTime,
+            hostListingId,
+          },
+        },
       },
     });
+    return tenantRequest;
   },
 };

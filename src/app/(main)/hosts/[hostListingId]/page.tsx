@@ -35,7 +35,7 @@ export default async function HostListingPage({ params }: Props) {
       <div className="mt-2 mb-4 tabular-nums">{hostListing.timings} </div>
 
       <div className="p-3 rounded border bg-gray-50">
-        <TenantForm />
+        <TenantForm hostListingId={hostListing.id} />
       </div>
     </>
   );

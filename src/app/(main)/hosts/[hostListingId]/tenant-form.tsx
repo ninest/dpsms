@@ -1,5 +1,6 @@
 "use client";
 
+import { requestTenancyAction } from "@/app/(main)/hosts/[hostListingId]/tenant-actions";
 import { TenantRequestForm, tenantRequestFormSchema } from "@/app/(main)/hosts/[hostListingId]/tenant-schemas";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -9,7 +10,11 @@ import { toHtmlInputDate } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-export function TenantForm() {
+interface Props {
+  hostListingId: string;
+}
+
+export function TenantForm({ hostListingId }: Props) {
   const form = useForm<TenantRequestForm>({
     resolver: zodResolver(tenantRequestFormSchema),
     defaultValues: {
@@ -20,7 +25,9 @@ export function TenantForm() {
     },
   });
 
-  const onSubmit = form.handleSubmit(async (data) => {});
+  const onSubmit = form.handleSubmit(async (data) => {
+    const response = await requestTenancyAction(hostListingId, data);
+  });
 
   return (
     <>
