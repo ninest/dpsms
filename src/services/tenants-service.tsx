@@ -10,35 +10,45 @@ export const tenantsService = {
       sqft: number;
       startTime: Date;
       duration: number;
+      tenancyRequestId?: string | undefined;
     }
   ) {
     const tenantUser = await usersService.getUserByClerkId(clerkUserId);
-    // Create TenantRequest
-    // Add hostListing to new TenantRequestListing
-    const tenantRequest = await prisma.tenantRequest.create({
-      data: {
-        itemsDescription: params.itemsDescription,
-        duration: params.duration,
-        sqft: params.sqft,
-        tenant: {
-          connectOrCreate: {
-            where: {
-              userId: tenantUser.id,
+    if (params.tenancyRequestId) {
+      await prisma.tenantRequestListing.create({
+        data: {
+          hostListingId,
+          startTime: params.startTime,
+          tenantRequestId: params.tenancyRequestId,
+        },
+      });
+    } else {
+      // Create TenantRequest
+      // Add hostListing to new TenantRequestListing
+      await prisma.tenantRequest.create({
+        data: {
+          itemsDescription: params.itemsDescription,
+          duration: params.duration,
+          sqft: params.sqft,
+          tenant: {
+            connectOrCreate: {
+              where: {
+                userId: tenantUser.id,
+              },
+              create: {
+                userId: tenantUser.id,
+              },
             },
+          },
+          tenantRequestListing: {
             create: {
-              userId: tenantUser.id,
+              startTime: params.startTime,
+              hostListingId,
             },
           },
         },
-        tenantRequestListing: {
-          create: {
-            startTime: params.startTime,
-            hostListingId,
-          },
-        },
-      },
-    });
-    return tenantRequest;
+      });
+    }
   },
   async getTenancyRequestsByHostListing(clerkUserId: string, hostListingId: string) {
     const tenantRequests = await prisma.tenantRequest.findMany({
@@ -57,6 +67,23 @@ export const tenantsService = {
       include: {
         tenantRequestListing: {
           where: {
+            hostListingId,
+          },
+        },
+      },
+    });
+    return tenantRequests;
+  },
+  async getTenancyRequestsSuggestionsForHostListing(clerkUserId: string, hostListingId: string) {
+    const tenantRequests = await prisma.tenantRequest.findMany({
+      where: {
+        tenant: {
+          user: {
+            clerkId: clerkUserId,
+          },
+        },
+        tenantRequestListing: {
+          none: {
             hostListingId,
           },
         },

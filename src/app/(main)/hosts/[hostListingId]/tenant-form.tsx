@@ -3,21 +3,25 @@
 import { requestTenancyAction } from "@/app/(main)/hosts/[hostListingId]/tenant-actions";
 import { TenantRequestForm, tenantRequestFormSchema } from "@/app/(main)/hosts/[hostListingId]/tenant-schemas";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { toHtmlInputDate } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 interface Props {
   hostListingId: string;
+  suggestions: null | { id: string; itemsDescription: string; duration: number; sqft: number }[];
 }
 
-export function TenantForm({ hostListingId }: Props) {
+export function TenantForm({ hostListingId, suggestions }: Props) {
   const form = useForm<TenantRequestForm>({
     resolver: zodResolver(tenantRequestFormSchema),
     defaultValues: {
+      tenancyRequestId: undefined,
       itemsDescription: "",
       duration: 0,
       startTime: new Date(),
@@ -34,10 +38,72 @@ export function TenantForm({ hostListingId }: Props) {
     }
   });
 
+  const autofill = (suggestionId: string) => {
+    const suggestion = suggestions?.find((suggestion) => suggestion.id === suggestionId);
+    if (!suggestion) return;
+    form.setValue("tenancyRequestId", suggestion.id);
+    form.setValue("itemsDescription", suggestion.itemsDescription);
+    form.setValue("sqft", suggestion.sqft);
+    form.setValue("duration", suggestion.duration);
+  };
+
+  useEffect(() => {
+    const tenancyRequestId = form.getValues("tenancyRequestId");
+    if (!tenancyRequestId) return;
+
+    autofill(tenancyRequestId);
+  }, [form.watch("tenancyRequestId")]);
+
+  const suggestionSelected = !!form.watch("tenancyRequestId");
+
   return (
     <>
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-4">
+          {!!suggestions?.length && (
+            <>
+              <FormField
+                control={form.control}
+                name="tenancyRequestId"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="mb-4">
+                      <FormLabel className="text-base">Previous request</FormLabel>
+                      <FormDescription>Select previous information to autofill.</FormDescription>
+                    </div>
+
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        {suggestions.map((suggestion) => (
+                          <FormItem key={suggestion.id} className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value={suggestion.id} />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {suggestion.itemsDescription} - {suggestion.sqft}sqft, {suggestion.duration} days
+                            </FormLabel>
+                          </FormItem>
+                        ))}
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            {/* @ts-ignore */}
+                            <RadioGroupItem value={undefined} />
+                          </FormControl>
+                          <FormLabel className="font-normal">None</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
+
           <FormField
             control={form.control}
             name="itemsDescription"
@@ -45,7 +111,7 @@ export function TenantForm({ hostListingId }: Props) {
               <FormItem>
                 <FormLabel>Items description</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Large couch, small TV, ..." {...field} />
+                  <Textarea disabled={suggestionSelected} placeholder="Large couch, small TV, ..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -58,7 +124,7 @@ export function TenantForm({ hostListingId }: Props) {
               <FormItem>
                 <FormLabel>Area (sqft)</FormLabel>
                 <FormControl>
-                  <Input placeholder="1000" type="number" {...field} />
+                  <Input disabled={suggestionSelected} placeholder="1000" type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -90,7 +156,7 @@ export function TenantForm({ hostListingId }: Props) {
               <FormItem>
                 <FormLabel>Duration (days)</FormLabel>
                 <FormControl>
-                  <Input placeholder="10" type="number" {...field} />
+                  <Input disabled={suggestionSelected} placeholder="10" type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

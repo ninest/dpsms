@@ -23,6 +23,10 @@ export default async function HostListingPage({ params }: Props) {
     ? await tenantsService.getTenancyRequestsByHostListing(clerkId, hostListing.id)
     : null;
 
+  const tenancyRequestSuggestions = clerkId
+    ? await tenantsService.getTenancyRequestsSuggestionsForHostListing(clerkId, hostListing.id)
+    : null;
+
   return (
     <>
       <div>
@@ -44,7 +48,7 @@ export default async function HostListingPage({ params }: Props) {
 
       <div className="mt-2 mb-4 tabular-nums">{hostListing.timings} </div>
 
-      {tenancyRequests?.length && (
+      {!!tenancyRequests?.length && (
         <div className="mb-4 p-3 rounded border bg-gray-50">
           <Title level={3}>My requests</Title>
           <div className="space-y-2 mt-2">
@@ -58,7 +62,9 @@ export default async function HostListingPage({ params }: Props) {
                     {tenancyRequest.tenantRequestListing.map((trl) => {
                       return (
                         <div>
-                          <div>{trl.startTime.toISOString()} - {tenancyRequest.duration} days</div>
+                          <div>
+                            {trl.startTime.toISOString()} - {tenancyRequest.duration} days
+                          </div>
                           <div>
                             <div className="flex items-center space-x-2">
                               <LucideCheckCircle2 className={cn({ "text-green-600": trl.tenantAccepted })} />{" "}
@@ -81,7 +87,7 @@ export default async function HostListingPage({ params }: Props) {
       )}
 
       <div className="p-3 rounded border bg-gray-50">
-        <TenantForm hostListingId={hostListing.id} />
+        <TenantForm hostListingId={hostListing.id} suggestions={tenancyRequestSuggestions}/>
       </div>
     </>
   );
