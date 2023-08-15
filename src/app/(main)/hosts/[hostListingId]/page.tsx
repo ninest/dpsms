@@ -1,3 +1,4 @@
+import { TenantForm } from "@/app/(main)/hosts/[hostListingId]/tenant-form";
 import { Title } from "@/components/typography/title";
 import { hostsService } from "@/services/hosts-service";
 import { usersService } from "@/services/users-service";
@@ -17,7 +18,9 @@ export default async function HostListingPage({ params }: Props) {
       <div>
         {hostUser.firstName} {hostUser.lastName}
       </div>
-      <Title className="mt-1" level={1}>{hostListing.host.user.address}</Title>
+      <Title className="mt-1" level={1}>
+        {hostListing.host.user.address}
+      </Title>
 
       <div className="mt-4 flex items-center space-x-1">
         {hostListing.qualifiers.map((qualifier) => (
@@ -29,7 +32,11 @@ export default async function HostListingPage({ params }: Props) {
 
       <div className="mt-2 tabular-nums">{hostListing.sqft} sqft</div>
 
-      <div className="mt-2 tabular-nums">{hostListing.timings} </div>
+      <div className="mt-2 mb-4 tabular-nums">{hostListing.timings} </div>
+
+      <div className="p-3 rounded border bg-gray-50">
+        <TenantForm />
+      </div>
     </>
   );
 }
