@@ -14,11 +14,6 @@ export const usersService = {
       create: {
         clerkId: clerkId,
         address: "",
-        hostUser: {
-          create: {
-            isActive: false,
-          },
-        },
       },
       include: {
         hostUser: true,
@@ -31,6 +26,7 @@ export const usersService = {
       lastName: clerkUser.lastName ?? "",
       address: dbUser.address,
       isActiveHost: dbUser.hostUser?.isActive ?? false,
+      hostUser: dbUser.hostUser,
     };
   },
   async updateUser(
@@ -75,5 +71,14 @@ export const usersService = {
     const dbUser = await prisma.user.findUnique({ where: { clerkId: clerkId } });
 
     return Boolean(clerkUser.firstName) && Boolean(clerkUser.lastName) && Boolean(dbUser?.address);
+  },
+  async isActiveHost(clerkId: string) {
+    const dbUser = await prisma.user.findUnique({
+      where: { clerkId: clerkId },
+      include: {
+        hostUser: true,
+      },
+    });
+    return Boolean(dbUser?.hostUser?.isActive);
   },
 };

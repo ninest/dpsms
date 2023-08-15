@@ -1,5 +1,6 @@
 "use client";
 
+import { createHostListingAction } from "@/app/(main)/new-host/host-actions";
 import { HostForm, hostFormSchema, qualifiers } from "@/app/(main)/new-host/host-schemas";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -21,7 +22,9 @@ export function HostForm() {
     },
   });
 
-  const onSubmit = form.handleSubmit(async (data) => {});
+  const onSubmit = form.handleSubmit(async (data) => {
+    const response = await createHostListingAction(data);
+  });
 
   return (
     <>
@@ -34,7 +37,7 @@ export function HostForm() {
               <FormItem>
                 <FormLabel>Timings</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="11 AM to 1 PM ..." {...field} />
+                  <Textarea placeholder="11 AM to 1 PM Mondays to Fridays ..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -48,7 +51,11 @@ export function HostForm() {
               <FormItem>
                 <FormLabel>Area (sqft)</FormLabel>
                 <FormControl>
-                  <Input placeholder="1000" type="number" {...field} />
+                  <Input
+                    placeholder="1000"
+                    type="number"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
