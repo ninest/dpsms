@@ -40,4 +40,28 @@ export const tenantsService = {
     });
     return tenantRequest;
   },
+  async getTenancyRequestsByHostListing(clerkUserId: string, hostListingId: string) {
+    const tenantRequests = await prisma.tenantRequest.findMany({
+      where: {
+        tenant: {
+          user: {
+            clerkId: clerkUserId,
+          },
+        },
+        tenantRequestListing: {
+          some: {
+            hostListingId,
+          },
+        },
+      },
+      include: {
+        tenantRequestListing: {
+          where: {
+            hostListingId,
+          },
+        },
+      },
+    });
+    return tenantRequests;
+  },
 };

@@ -26,7 +26,12 @@ export function TenantForm({ hostListingId }: Props) {
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
-    const response = await requestTenancyAction(hostListingId, data);
+    try {
+      const response = await requestTenancyAction(hostListingId, data);
+      form.reset();
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   return (
