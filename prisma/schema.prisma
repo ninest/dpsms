@@ -90,7 +90,9 @@ model TenantRequest {
   tenant       TenantUser @relation(fields: [tenantUserId], references: [id])
   tenantUserId String
 
-  duration Int // in days
+  itemsDescription String
+  duration         Int // in days
+  sqft             Int
 
   tenantRequestListing TenantRequestListing[]
 }
