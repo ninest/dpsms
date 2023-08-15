@@ -14,7 +14,7 @@ export const hostsService = {
   ) {
     const dbUser = await usersService.getUserByClerkId(clerkId);
     if (!dbUser.hostUser?.isActive) {
-      throw new Error("You are not an active host")
+      throw new Error("You are not an active host");
     }
 
     const hostListing = prisma.hostListing.create({
@@ -25,4 +25,20 @@ export const hostsService = {
     });
     return hostListing;
   },
+  async getHostListing(id: string) {
+    const hostListing = await prisma.hostListing.findUniqueOrThrow({
+      where: {
+        id,
+      },
+      include: {
+        host: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    return hostListing;
+  },
+  async getMyHostListings(userId: string) {},
 };
