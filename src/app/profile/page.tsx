@@ -1,4 +1,5 @@
 import { ProfileForm } from "@/app/profile/profile-form";
+import { Title } from "@/components/typography/title";
 import { usersService } from "@/services/users-service";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
 
@@ -7,12 +8,12 @@ export default async function ProfilePage() {
   if (!clerkId) return redirectToSignIn();
 
   const user = await usersService.getUserByClerkId(clerkId);
-  const hasName = !!user.firstName;
+  const isProfileComplete = await usersService.profileComplete(clerkId);
 
   return (
     <>
       <main className="p-3">
-        <h1 className="mb-2">{hasName ? `${user.firstName}'s` : "Your"} Profile</h1>
+        <Title level={1}>{!isProfileComplete ? `Complete your profile` : `${user.firstName}'s profile`}</Title>
         <ProfileForm initialProfile={user} />
       </main>
     </>

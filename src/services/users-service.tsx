@@ -6,9 +6,19 @@ export const usersService = {
     const clerkUser = await clerkClient.users.getUser(clerkId);
 
     // TODO: move this to after first sign in
-    let dbUser = await prisma.user.findUniqueOrThrow({
+    let dbUser = await prisma.user.upsert({
       where: {
+        clerkId,
+      },
+      update: {},
+      create: {
         clerkId: clerkId,
+        address: "",
+        hostUser: {
+          create: {
+            isActive: false,
+          },
+        },
       },
       include: {
         hostUser: true,
@@ -59,7 +69,12 @@ export const usersService = {
       address: dbUser.address,
     };
   },
-  async createUser(params: { email: string; firstName: string; lastName: string; password: string }) {
-    
+  async createUser(params: { email: string; firstName: string; lastName: string; password: string }) {},
+  // Determine if the user has completed their profile
+  async profileComplete(clerkId: string) {
+    const clerkUser = await clerkClient.users.getUser(clerkId);
+    const dbUser = await prisma.user.findUnique({ where: { clerkId: clerkId } });
+
+    return Boolean(clerkUser.firstName) && Boolean(clerkUser.lastName) && Boolean(dbUser?.address);
   },
 };
