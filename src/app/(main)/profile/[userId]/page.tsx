@@ -1,6 +1,10 @@
+import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
 import { usersService } from "@/services/users-service";
+import { cn } from "@/utils";
+import { auth } from "@clerk/nextjs";
+import { LucideCheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
@@ -10,8 +14,13 @@ interface Props {
 }
 
 export default async function UserProfilePage({ params }: Props) {
+  const { userId: clerkId } = auth();
+
   const user = await usersService.getUserById(params.userId);
   const hostListings = user.hostUser?.listings;
+
+  const dbUser = await usersService.getUserByClerkId(clerkId);
+  const isCurrentUsersPage = dbUser.id === params.userId;
 
   return (
     <>
@@ -46,6 +55,64 @@ export default async function UserProfilePage({ params }: Props) {
               })}
             </div>
           </div>
+        </>
+      )}
+
+      {isCurrentUsersPage && (
+        <>
+          <Title level={2}>My requests</Title>
+
+          <div className="mb-4 space-y-2">
+            {user.tenantUser?.requests.map((request) => {
+              return (
+                <div key={request.id} className="border p-3 rounded bg-gray-100">
+                  <div>
+                    <div>
+                      {request.itemsDescription} - {request.sqft}sqft
+                    </div>
+                    <div>{request.duration} days</div>
+
+                    <div className="space-y-2">
+                      {request.tenantRequestListing.map((trl) => {
+                        return (
+                          <div key={trl.id}>
+                            <b>{trl.hostListing.host.user.address}</b>
+
+                            <div>
+                              <div className="flex items-center space-x-2">
+                                <LucideCheckCircle2
+                                  className={cn("text-gray-300", {
+                                    "text-green-600": trl.hostAccepted,
+                                  })}
+                                />
+                                {trl.hostAccepted ? "Host accepted" : "Host pending"}
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <LucideCheckCircle2
+                                  className={cn("text-gray-300", {
+                                    "text-green-600": trl.tenantAccepted,
+                                  })}
+                                />
+                                {trl.tenantAccepted ? "Host accepted" : "Tenant pending"}
+                              </div>
+                              {trl.hostAccepted && (
+                                <form action={acceptTenancyRequestListingAction}>
+                                  <input type="hidden" name="tenancyRequestListingId" value={trl.id} />
+                                  <Button>Accept</Button>
+                                </form>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <Title level={2}>My tenancies</Title>
         </>
       )}
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { requestTenancyAction } from "@/app/(main)/hosts/[hostListingId]/tenant-actions";
+import { requestTenancyAction } from "@/app/(main)/tenant-actions";
 import { TenantRequestForm, tenantRequestFormSchema } from "@/app/(main)/hosts/[hostListingId]/tenant-schemas";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";

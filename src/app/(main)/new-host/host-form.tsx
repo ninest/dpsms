@@ -1,6 +1,6 @@
 "use client";
 
-import { createHostListingAction } from "@/app/(main)/new-host/host-actions";
+import { createHostListingAction } from "@/app/(main)/host-actions";
 import { HostForm, hostFormSchema, qualifiers } from "@/app/(main)/new-host/host-schemas";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";

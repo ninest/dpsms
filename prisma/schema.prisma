@@ -101,7 +101,7 @@ model TenantRequest {
 model TenantRequestListing {
   id String @id @default(uuid())
 
-  tenantRequest   TenantRequest @relation(fields: [tenantRequestId], references: [id])
+  tenantRequest   TenantRequest @relation(fields: [tenantRequestId], references: [id], onDelete: Cascade)
   tenantRequestId String
 
   hostListing   HostListing @relation(fields: [hostListingId], references: [id])
@@ -124,4 +124,7 @@ model Tenancy {
 
   startTime DateTime
   endTime   DateTime
+
+  itemsDescription String
+  sqft             Int
 }

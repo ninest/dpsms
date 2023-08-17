@@ -91,4 +91,14 @@ export const tenantsService = {
     });
     return tenantRequests;
   },
+  async acceptTenancy(tenancyRequestListingId: string) {
+    await prisma.tenantRequestListing.update({
+      where: {
+        id: tenancyRequestListingId,
+      },
+      data: {
+        tenantAccepted: true,
+      },
+    });
+  },
 };

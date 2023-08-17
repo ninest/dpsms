@@ -51,7 +51,23 @@ export const usersService = {
         },
         tenantUser: {
           include: {
-            requests: true
+            requests: {
+              include: {
+              tenantRequestListing: {
+                include: {
+                  hostListing: {
+                    include: {
+                      host: { 
+                        include: {
+                          user: true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              }
+            }
           }
         },
         moverUser: true,

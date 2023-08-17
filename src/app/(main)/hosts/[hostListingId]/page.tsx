@@ -1,4 +1,5 @@
-import { acceptTenantRequestListingAction } from "@/app/(main)/hosts/[hostListingId]/host-actions";
+
+import { acceptTenantRequestListingAction } from "@/app/(main)/host-actions";
 import { TenantForm } from "@/app/(main)/hosts/[hostListingId]/tenant-form";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
@@ -6,8 +7,8 @@ import { hostsService } from "@/services/hosts-service";
 import { tenantsService } from "@/services/tenants-service";
 import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
-import { auth, redirectToSignIn } from "@clerk/nextjs";
-import { LucideCheck, LucideCheckCircle, LucideCheckCircle2 } from "lucide-react";
+import { auth } from "@clerk/nextjs";
+import { LucideCheckCircle2 } from "lucide-react";
 
 interface Props {
   params: {
@@ -70,17 +71,20 @@ export default async function HostListingPage({ params }: Props) {
                   <div>
                     {tenancyRequestListing.startTime.toISOString()} - {duration} days
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <LucideCheckCircle2
-                      className={cn("text-gray-300", { "text-green-600": tenancyRequestListing.hostAccepted })}
-                    />
-                    {tenancyRequestListing.hostAccepted ? "Host accepted" : "Host pending"}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <LucideCheckCircle2
-                      className={cn("text-gray-300", { "text-green-600": tenancyRequestListing.tenantAccepted })}
-                    />
-                    {tenancyRequestListing.tenantAccepted ? "Host accepted" : "Tenant pending"}
+
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <LucideCheckCircle2
+                        className={cn("text-gray-300", { "text-green-600": tenancyRequestListing.hostAccepted })}
+                      />
+                      {tenancyRequestListing.hostAccepted ? "Host accepted" : "Host pending"}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <LucideCheckCircle2
+                        className={cn("text-gray-300", { "text-green-600": tenancyRequestListing.tenantAccepted })}
+                      />
+                      {tenancyRequestListing.tenantAccepted ? "Host accepted" : "Tenant pending"}
+                    </div>
                   </div>
 
                   {!tenancyRequestListing.hostAccepted && (
