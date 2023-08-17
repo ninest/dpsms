@@ -91,6 +91,7 @@ model TenantRequest {
   tenantUserId String
 
   itemsDescription String
+  // TODO: maybe move duration to TenantRequestListing
   duration         Int // in days
   sqft             Int
 

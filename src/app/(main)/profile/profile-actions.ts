@@ -1,6 +1,6 @@
 "use server";
 
-import { ProfileFormData, profileFormSchema } from "@/app/profile/profile-schemas";
+import { ProfileFormData, profileFormSchema } from "@/app/(main)/profile/profile-schemas";
 import { usersService } from "@/services/users-service";
 import { redirectToSignIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";

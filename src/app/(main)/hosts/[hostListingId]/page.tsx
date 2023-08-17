@@ -67,11 +67,15 @@ export default async function HostListingPage({ params }: Props) {
                           </div>
                           <div>
                             <div className="flex items-center space-x-2">
-                              <LucideCheckCircle2 className={cn({ "text-green-600": trl.tenantAccepted })} />{" "}
-                              {trl.tenantAccepted ? "Tenant accepted" : "Tenant pending"}
+                              <LucideCheckCircle2
+                                className={cn("text-gray-300", { "text-green-600": trl.hostAccepted })}
+                              />{" "}
+                              {trl.hostAccepted ? "Host accepted" : "Host pending"}
                             </div>
                             <div className="flex items-center space-x-2">
-                              <LucideCheckCircle2 className={cn({ "text-green-600": trl.hostAccepted })} />{" "}
+                              <LucideCheckCircle2
+                                className={cn("text-gray-300", { "text-green-600": trl.tenantAccepted })}
+                              />{" "}
                               {trl.tenantAccepted ? "Host accepted" : "Tenant pending"}
                             </div>
                           </div>
@@ -87,7 +91,7 @@ export default async function HostListingPage({ params }: Props) {
       )}
 
       <div className="p-3 rounded border bg-gray-50">
-        <TenantForm hostListingId={hostListing.id} suggestions={tenancyRequestSuggestions}/>
+        <TenantForm hostListingId={hostListing.id} suggestions={tenancyRequestSuggestions} />
       </div>
     </>
   );

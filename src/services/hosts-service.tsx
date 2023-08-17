@@ -40,5 +40,14 @@ export const hostsService = {
     });
     return hostListing;
   },
-  async getMyHostListings(userId: string) {},
+  async getMyHostListings(userId: string) {
+    const hostListings = await prisma.hostListing.findMany({
+      where: {
+        host: {
+          userId,
+        },
+      },
+    });
+    return hostListings;
+  },
 };

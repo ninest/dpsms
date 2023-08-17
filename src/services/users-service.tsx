@@ -1,6 +1,7 @@
 import { prisma } from "@/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 
+// TODO: User type
 export const usersService = {
   async getUserByClerkId(clerkId: string) {
     const clerkUser = await clerkClient.users.getUser(clerkId);
@@ -27,6 +28,46 @@ export const usersService = {
       address: dbUser.address,
       isActiveHost: dbUser.hostUser?.isActive ?? false,
       hostUser: dbUser.hostUser,
+    };
+  },
+  async getUserById(userId: string) {
+    const dbUser = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: userId,
+      },
+      include: {
+        hostUser: {
+          include: {
+            listings: {
+              include: {
+                tenantRequestListing: {
+                  include: {
+                    tenantRequest: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        tenantUser: {
+          include: {
+            requests: true
+          }
+        },
+        moverUser: true,
+      },
+    });
+    const clerkUser = await clerkClient.users.getUser(dbUser.clerkId);
+
+    return {
+      id: dbUser.id,
+      firstName: clerkUser.firstName,
+      lastName: clerkUser.lastName,
+      address: dbUser.address,
+      isActiveHost: dbUser.hostUser?.isActive ?? false,
+      hostUser: dbUser.hostUser,
+      tenantUser: dbUser.tenantUser,
+      moverUser: dbUser.moverUser,
     };
   },
   async updateUser(
