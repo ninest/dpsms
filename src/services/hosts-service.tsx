@@ -40,14 +40,29 @@ export const hostsService = {
     });
     return hostListing;
   },
-  async getMyHostListings(userId: string) {
-    const hostListings = await prisma.hostListing.findMany({
+  async getTenantRequests(hostListingId: string) {
+    const tenancyRequest = await prisma.tenantRequestListing.findMany({
       where: {
-        host: {
-          userId,
+        hostListingId,
+      },
+      include: {
+        tenantRequest: {
+          include: {
+            tenant: {
+              include: {
+                user: true,
+              },
+            },
+          },
         },
       },
     });
-    return hostListings;
+    return tenancyRequest;
+  },
+  async acceptTenancyRequestListing(tenancyRequestListingId: string) {
+    await prisma.tenantRequestListing.update({
+      where: { id: tenancyRequestListingId },
+      data: { hostAccepted: true },
+    });
   },
 };
