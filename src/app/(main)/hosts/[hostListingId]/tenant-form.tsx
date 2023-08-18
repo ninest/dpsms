@@ -153,7 +153,7 @@ export function TenantForm({ hostListingId, suggestions }: Props) {
             name="endTime"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start time</FormLabel>
+                <FormLabel>End time</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="10"

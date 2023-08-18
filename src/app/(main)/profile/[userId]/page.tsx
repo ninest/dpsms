@@ -6,6 +6,7 @@ import { cn } from "@/utils";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
 import { LucideCheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: {
@@ -18,7 +19,7 @@ export default async function UserProfilePage({ params }: Props) {
   // TODO: determine if this page is public
   if (!clerkId) return redirectToSignIn();
 
-  const user = await usersService.getUserById(params.userId);
+  const user = await usersService.getUserById(params.userId).catch(notFound);
   const hostListings = user.hostUser?.listings;
 
   const dbUser = await usersService.getUserByClerkId(clerkId);
