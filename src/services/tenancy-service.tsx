@@ -18,11 +18,6 @@ export const tenancyService = {
       });
 
       // Copy data to new tenancy
-
-      // TODO: might move duration
-      const endTime = new Date(trl.startTime);
-      endTime.setDate(endTime.getDate() + deletedTenantRequest.duration);
-
       const tenancy = await prisma.tenancy.create({
         data: {
           hostListingId: trl.hostListingId,
@@ -30,7 +25,7 @@ export const tenancyService = {
           itemsDescription: deletedTenantRequest.itemsDescription,
           sqft: deletedTenantRequest.sqft,
           startTime: trl.startTime,
-          endTime,
+          endTime: trl.endTime,
         },
       });
       return tenancy;

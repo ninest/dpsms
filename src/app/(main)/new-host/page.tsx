@@ -11,10 +11,12 @@ export default async function NewHostPage() {
   const isActiveHost = await usersService.isActiveHost(clerkId);
   if (!isActiveHost) return redirect("/profile");
 
+  const { address } = await usersService.getUserByClerkId(clerkId);
+
   return (
     <>
       <Title level={1}>New host listing</Title>
-      <HostForm />
+      <HostForm defaultAddress={address} />
     </>
   );
 }

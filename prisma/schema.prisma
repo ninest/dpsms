@@ -66,6 +66,7 @@ model HostListing {
 
   host       HostUser @relation(fields: [hostUserId], references: [id])
   hostUserId String
+  address    String
 
   // Drop off between
   // dropOff DateTime
@@ -91,8 +92,6 @@ model TenantRequest {
   tenantUserId String
 
   itemsDescription String
-  // TODO: maybe move duration to TenantRequestListing
-  duration         Int // in days
   sqft             Int
 
   tenantRequestListing TenantRequestListing[]
@@ -108,6 +107,7 @@ model TenantRequestListing {
   hostListingId String
 
   startTime DateTime
+  endTime   DateTime
 
   hostAccepted   Boolean @default(false)
   tenantAccepted Boolean @default(false)

@@ -1,4 +1,3 @@
-
 import { acceptTenantRequestListingAction } from "@/app/(main)/host-actions";
 import { TenantForm } from "@/app/(main)/hosts/[hostListingId]/tenant-form";
 import { Title } from "@/components/typography/title";
@@ -41,7 +40,7 @@ export default async function HostListingPage({ params }: Props) {
         {hostUser.firstName} {hostUser.lastName}
       </div>
       <Title className="mt-1" level={1}>
-        {hostListing.host.user.address}
+        {hostListing.address}
       </Title>
 
       <div className="mt-4 flex items-center space-x-1">
@@ -61,7 +60,7 @@ export default async function HostListingPage({ params }: Props) {
           <Title level={3}>Requests</Title>
           <div className="space-y-2 mt-2">
             {allTenancyRequests.map((tenancyRequestListing) => {
-              const { duration, itemsDescription, sqft, tenant } = tenancyRequestListing.tenantRequest;
+              const { itemsDescription, sqft, tenant } = tenancyRequestListing.tenantRequest;
               return (
                 <div key={tenancyRequestListing.id}>
                   <div>{tenant.userId}</div>
@@ -69,19 +68,23 @@ export default async function HostListingPage({ params }: Props) {
                     {itemsDescription} - {sqft}sqft
                   </b>
                   <div>
-                    {tenancyRequestListing.startTime.toISOString()} - {duration} days
+                    {tenancyRequestListing.startTime.toISOString()} - {tenancyRequestListing.endTime.toISOString()}
                   </div>
 
                   <div>
                     <div className="flex items-center space-x-2">
                       <LucideCheckCircle2
-                        className={cn("text-gray-300", { "text-green-600": tenancyRequestListing.hostAccepted })}
+                        className={cn("text-gray-300", {
+                          "text-green-600": tenancyRequestListing.hostAccepted,
+                        })}
                       />
                       {tenancyRequestListing.hostAccepted ? "Host accepted" : "Host pending"}
                     </div>
                     <div className="flex items-center space-x-2">
                       <LucideCheckCircle2
-                        className={cn("text-gray-300", { "text-green-600": tenancyRequestListing.tenantAccepted })}
+                        className={cn("text-gray-300", {
+                          "text-green-600": tenancyRequestListing.tenantAccepted,
+                        })}
                       />
                       {tenancyRequestListing.tenantAccepted ? "Host accepted" : "Tenant pending"}
                     </div>
@@ -115,20 +118,24 @@ export default async function HostListingPage({ params }: Props) {
                   <div>
                     {tenancyRequest.tenantRequestListing.map((trl) => {
                       return (
-                        <div>
+                        <div key={trl.id}>
                           <div>
-                            {trl.startTime.toISOString()} - {tenancyRequest.duration} days
+                            {trl.startTime.toISOString()} - {trl.endTime.toISOString()}
                           </div>
                           <div>
                             <div className="flex items-center space-x-2">
                               <LucideCheckCircle2
-                                className={cn("text-gray-300", { "text-green-600": trl.hostAccepted })}
+                                className={cn("text-gray-300", {
+                                  "text-green-600": trl.hostAccepted,
+                                })}
                               />
                               {trl.hostAccepted ? "Host accepted" : "Host pending"}
                             </div>
                             <div className="flex items-center space-x-2">
                               <LucideCheckCircle2
-                                className={cn("text-gray-300", { "text-green-600": trl.tenantAccepted })}
+                                className={cn("text-gray-300", {
+                                  "text-green-600": trl.tenantAccepted,
+                                })}
                               />
                               {trl.tenantAccepted ? "Host accepted" : "Tenant pending"}
                             </div>

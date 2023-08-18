@@ -10,6 +10,7 @@ export const hostsService = {
       qualifiers: string[];
       sizeDescription?: string | undefined;
       image?: string | undefined;
+      address: string;
     }
   ) {
     const dbUser = await usersService.getUserByClerkId(clerkId);
