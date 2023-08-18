@@ -6,7 +6,6 @@ export const usersService = {
   async getUserByClerkId(clerkId: string) {
     const clerkUser = await clerkClient.users.getUser(clerkId);
 
-    // TODO: move this to after first sign in
     let dbUser = await prisma.user.upsert({
       where: {
         clerkId,
@@ -42,33 +41,33 @@ export const usersService = {
               include: {
                 tenantRequestListing: {
                   include: {
-                    tenantRequest: true
-                  }
-                }
-              }
-            }
-          }
+                    tenantRequest: true,
+                  },
+                },
+              },
+            },
+          },
         },
         tenantUser: {
           include: {
             requests: {
               include: {
-              tenantRequestListing: {
-                include: {
-                  hostListing: {
-                    include: {
-                      host: { 
-                        include: {
-                          user: true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-              }
-            }
-          }
+                tenantRequestListing: {
+                  include: {
+                    hostListing: {
+                      include: {
+                        host: {
+                          include: {
+                            user: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         moverUser: true,
       },

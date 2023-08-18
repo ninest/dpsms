@@ -9,16 +9,20 @@ export const tenantsService = {
       itemsDescription: string;
       sqft: number;
       startTime: Date;
-      duration: number;
+      endTime: Date;
       tenancyRequestId?: string | undefined;
     }
   ) {
+    if (params.startTime > params.endTime) {
+      throw new Error("Start time must be before end time");
+    }
     const tenantUser = await usersService.getUserByClerkId(clerkUserId);
     if (params.tenancyRequestId) {
       await prisma.tenantRequestListing.create({
         data: {
           hostListingId,
           startTime: params.startTime,
+          endTime: params.endTime,
           tenantRequestId: params.tenancyRequestId,
         },
       });
@@ -28,7 +32,6 @@ export const tenantsService = {
       await prisma.tenantRequest.create({
         data: {
           itemsDescription: params.itemsDescription,
-          duration: params.duration,
           sqft: params.sqft,
           tenant: {
             connectOrCreate: {
@@ -43,6 +46,7 @@ export const tenantsService = {
           tenantRequestListing: {
             create: {
               startTime: params.startTime,
+              endTime: params.endTime,
               hostListingId,
             },
           },

@@ -3,7 +3,7 @@ import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
 import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
-import { auth } from "@clerk/nextjs";
+import { auth, redirectToSignIn } from "@clerk/nextjs";
 import { LucideCheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
@@ -15,6 +15,8 @@ interface Props {
 
 export default async function UserProfilePage({ params }: Props) {
   const { userId: clerkId } = auth();
+  // TODO: determine if this page is public
+  if (!clerkId) return redirectToSignIn();
 
   const user = await usersService.getUserById(params.userId);
   const hostListings = user.hostUser?.listings;
@@ -70,13 +72,12 @@ export default async function UserProfilePage({ params }: Props) {
                     <div>
                       {request.itemsDescription} - {request.sqft}sqft
                     </div>
-                    <div>{request.duration} days</div>
 
                     <div className="space-y-2">
                       {request.tenantRequestListing.map((trl) => {
                         return (
                           <div key={trl.id}>
-                            <b>{trl.hostListing.host.user.address}</b>
+                            <b>{trl.hostListing.address}</b>
 
                             <div>
                               <div className="flex items-center space-x-2">

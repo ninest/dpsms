@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 
 interface Props {
   hostListingId: string;
-  suggestions: null | { id: string; itemsDescription: string; duration: number; sqft: number }[];
+  suggestions: null | { id: string; itemsDescription: string; sqft: number }[];
 }
 
 export function TenantForm({ hostListingId, suggestions }: Props) {
@@ -23,8 +23,8 @@ export function TenantForm({ hostListingId, suggestions }: Props) {
     defaultValues: {
       tenancyRequestId: undefined,
       itemsDescription: "",
-      duration: 0,
       startTime: new Date(),
+      endTime: new Date(),
       sqft: 0,
     },
   });
@@ -44,7 +44,6 @@ export function TenantForm({ hostListingId, suggestions }: Props) {
     form.setValue("tenancyRequestId", suggestion.id);
     form.setValue("itemsDescription", suggestion.itemsDescription);
     form.setValue("sqft", suggestion.sqft);
-    form.setValue("duration", suggestion.duration);
   };
 
   useEffect(() => {
@@ -84,7 +83,7 @@ export function TenantForm({ hostListingId, suggestions }: Props) {
                               <RadioGroupItem value={suggestion.id} />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              {suggestion.itemsDescription} - {suggestion.sqft}sqft, {suggestion.duration} days
+                              {suggestion.itemsDescription} - {suggestion.sqft}sqft
                             </FormLabel>
                           </FormItem>
                         ))}
@@ -151,12 +150,18 @@ export function TenantForm({ hostListingId, suggestions }: Props) {
           />
           <FormField
             control={form.control}
-            name="duration"
+            name="endTime"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Duration (days)</FormLabel>
+                <FormLabel>Start time</FormLabel>
                 <FormControl>
-                  <Input disabled={suggestionSelected} placeholder="10" type="number" {...field} />
+                  <Input
+                    placeholder="10"
+                    type="datetime-local"
+                    {...field}
+                    value={toHtmlInputDate(field.value)}
+                    onChange={(e) => field.onChange(new Date(e.target.value))}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

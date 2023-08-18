@@ -19,5 +19,6 @@ export const hostFormSchema = z.object({
   sizeDescription: z.string().optional(),
   qualifiers: z.array(qualifiersEnumSchema),
   image: z.string().url().optional().or(z.literal("")),
+  address: z.string().trim().min(1),
 });
 export type HostForm = z.infer<typeof hostFormSchema>;

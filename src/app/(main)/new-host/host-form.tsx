@@ -10,7 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-export function HostForm() {
+interface Props {
+  defaultAddress: string;
+}
+
+export function HostForm({ defaultAddress }: Props) {
   const form = useForm<HostForm>({
     resolver: zodResolver(hostFormSchema),
     defaultValues: {
@@ -19,6 +23,7 @@ export function HostForm() {
       qualifiers: [],
       sizeDescription: "",
       image: "",
+      address: defaultAddress,
     },
   });
 
@@ -30,6 +35,20 @@ export function HostForm() {
     <>
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Address</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="timings"
@@ -51,11 +70,7 @@ export function HostForm() {
               <FormItem>
                 <FormLabel>Area (sqft)</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="1000"
-                    type="number"
-                    {...field}
-                  />
+                  <Input placeholder="1000" type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
