@@ -7,7 +7,7 @@ export default async function OnboardingRedirect() {
   if (!clerkId) return redirectToSignIn();
 
   // fetch guarantees upsert immediately after sign up
-  const {} = await usersService.getUserByClerkId(clerkId);
+  await usersService.getUserByClerkId(clerkId);
 
   const profileComplete = await usersService.profileComplete(clerkId);
   return profileComplete ? redirect("/") : redirect("/profile/edit");
