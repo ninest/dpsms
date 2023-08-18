@@ -1,4 +1,4 @@
-import { ProfileForm } from "@/app/profile/profile-form";
+import { ProfileForm } from "@/app/(main)/profile/profile-form";
 import { Title } from "@/components/typography/title";
 import { usersService } from "@/services/users-service";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
