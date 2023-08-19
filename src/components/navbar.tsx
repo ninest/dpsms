@@ -9,7 +9,9 @@ export async function Navbar() {
 
   return (
     <header className="flex items-center justify-between p-5 border-b">
-      <div className="font-extrabold">DPSMS</div>
+      <Link className="font-extrabold" href="/">
+        DPSMS
+      </Link>
       <nav>
         <ul className="flex items-center space-x-5">
           {isAuthenticated ? (
