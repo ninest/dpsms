@@ -1,11 +1,15 @@
-import { currentUser } from "@clerk/nextjs";
+"use client";
+
+import { currentUser, useClerk, useUser } from "@clerk/nextjs";
 import { LucideSearch } from "lucide-react";
 import Link from "next/link";
 import { ComponentProps } from "react";
 
-export async function Navbar() {
-  const user = await currentUser();
+export function Navbar() {
+  const { user } = useUser();
   const isAuthenticated = !!user;
+
+  const { signOut } = useClerk();
 
   return (
     <header className="flex items-center justify-between p-5 border-b">
@@ -22,6 +26,7 @@ export async function Navbar() {
               <NavbarLink href="/profile">
                 {user.firstName} {user.lastName}
               </NavbarLink>
+              <button onClick={() => signOut()}>Sign out</button>
             </>
           ) : (
             <>
