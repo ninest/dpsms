@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs";
 import { Title } from "@/components/typography/title";
 import { usersService } from "@/services/users-service";
-import { listingsService } from "@/services/listings-service";
 import { ListingCard } from "@/components/ListingCard";
+import { hostsService } from "@/services/hosts-service";
 
 export default async function Home() {
   let welcomeMessage = "Welcome to DPSMS!";
@@ -14,7 +14,7 @@ export default async function Home() {
     welcomeMessage = `Welcome back, ${dbUser.firstName}!`;
   }
 
-  const listings = await listingsService.getHostListings();
+  const listings = await hostsService.getHostListings();
 
   return (
     <main>
