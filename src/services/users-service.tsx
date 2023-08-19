@@ -17,6 +17,15 @@ export const usersService = {
       },
       include: {
         hostUser: true,
+        tenantUser: {
+          include: {
+            tenancies: {
+              include: {
+                hostListing: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -27,6 +36,7 @@ export const usersService = {
       address: dbUser.address,
       isActiveHost: dbUser.hostUser?.isActive ?? false,
       hostUser: dbUser.hostUser,
+      tenancies: dbUser.tenantUser?.tenancies,
     };
   },
   async getUserById(userId: string) {
