@@ -1,7 +1,7 @@
 "use client";
 
-import { updateProfileAction } from "@/app/profile/profile-actions";
-import { type ProfileFormData, profileFormSchema } from "@/app/profile/profile-schemas";
+import { updateProfileAction } from "@/app/(main)/profile/profile-actions";
+import { type ProfileFormData, profileFormSchema } from "@/app/(main)/profile/profile-schemas";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";

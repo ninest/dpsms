@@ -1,11 +1,11 @@
 import { prisma } from "@/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 
+// TODO: User type
 export const usersService = {
   async getUserByClerkId(clerkId: string) {
     const clerkUser = await clerkClient.users.getUser(clerkId);
 
-    // TODO: move this to after first sign in
     let dbUser = await prisma.user.upsert({
       where: {
         clerkId,
@@ -14,14 +14,18 @@ export const usersService = {
       create: {
         clerkId: clerkId,
         address: "",
-        hostUser: {
-          create: {
-            isActive: false,
-          },
-        },
       },
       include: {
         hostUser: true,
+        tenantUser: {
+          include: {
+            tenancies: {
+              include: {
+                hostListing: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -31,6 +35,64 @@ export const usersService = {
       lastName: clerkUser.lastName ?? "",
       address: dbUser.address,
       isActiveHost: dbUser.hostUser?.isActive ?? false,
+      hostUser: dbUser.hostUser,
+      tenancies: dbUser.tenantUser?.tenancies,
+    };
+  },
+  async getUserById(userId: string) {
+    const dbUser = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: userId,
+      },
+      include: {
+        hostUser: {
+          include: {
+            listings: {
+              include: {
+                tenantRequestListing: {
+                  include: {
+                    tenantRequest: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        tenantUser: {
+          include: {
+            requests: {
+              include: {
+                tenantRequestListing: {
+                  include: {
+                    hostListing: {
+                      include: {
+                        host: {
+                          include: {
+                            user: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        moverUser: true,
+      },
+    });
+    const clerkUser = await clerkClient.users.getUser(dbUser.clerkId);
+
+    return {
+      id: dbUser.id,
+      firstName: clerkUser.firstName,
+      lastName: clerkUser.lastName,
+      address: dbUser.address,
+      isActiveHost: dbUser.hostUser?.isActive ?? false,
+      hostUser: dbUser.hostUser,
+      tenantUser: dbUser.tenantUser,
+      moverUser: dbUser.moverUser,
     };
   },
   async updateUser(
@@ -76,5 +138,14 @@ export const usersService = {
     const dbUser = await prisma.user.findUnique({ where: { clerkId: clerkId } });
 
     return Boolean(clerkUser.firstName) && Boolean(clerkUser.lastName) && Boolean(dbUser?.address);
+  },
+  async isActiveHost(clerkId: string) {
+    const dbUser = await prisma.user.findUnique({
+      where: { clerkId: clerkId },
+      include: {
+        hostUser: true,
+      },
+    });
+    return Boolean(dbUser?.hostUser?.isActive);
   },
 };

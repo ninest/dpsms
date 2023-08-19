@@ -11,14 +11,9 @@ model User {
   id      String @id @default(uuid())
   clerkId String @unique
 
-  hostUser   HostUser? @relation(fields: [hostUserId], references: [id])
-  hostUserId String?   @unique
-
-  tenantUser   TenantUser? @relation(fields: [tenantUserId], references: [id])
-  tenantUserId String?
-
-  moverUser   MoverUser? @relation(fields: [moverUserId], references: [id])
-  moverUserId String?
+  hostUser   HostUser?
+  tenantUser TenantUser?
+  moverUser  MoverUser?
 
   address String
 
@@ -27,16 +22,20 @@ model User {
 }
 
 model HostUser {
-  id   String @id @default(uuid())
-  user User[]
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 
   isActive Boolean       @default(true)
   listings HostListing[]
 }
 
 model TenantUser {
-  id   String @id @default(uuid())
-  user User[]
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 
   requests TenantRequest[]
 
@@ -44,8 +43,10 @@ model TenantUser {
 }
 
 model MoverUser {
-  id   String @id @default(uuid())
-  user User[]
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 }
 
 model Trust {
@@ -65,6 +66,7 @@ model HostListing {
 
   host       HostUser @relation(fields: [hostUserId], references: [id])
   hostUserId String
+  address    String
 
   // Drop off between
   // dropOff DateTime
@@ -89,7 +91,8 @@ model TenantRequest {
   tenant       TenantUser @relation(fields: [tenantUserId], references: [id])
   tenantUserId String
 
-  duration Int // in days
+  itemsDescription String
+  sqft             Int
 
   tenantRequestListing TenantRequestListing[]
 }
@@ -97,13 +100,14 @@ model TenantRequest {
 model TenantRequestListing {
   id String @id @default(uuid())
 
-  tenantRequest   TenantRequest @relation(fields: [tenantRequestId], references: [id])
+  tenantRequest   TenantRequest @relation(fields: [tenantRequestId], references: [id], onDelete: Cascade)
   tenantRequestId String
 
   hostListing   HostListing @relation(fields: [hostListingId], references: [id])
   hostListingId String
 
   startTime DateTime
+  endTime   DateTime
 
   hostAccepted   Boolean @default(false)
   tenantAccepted Boolean @default(false)
@@ -120,4 +124,7 @@ model Tenancy {
 
   startTime DateTime
   endTime   DateTime
+
+  itemsDescription String
+  sqft             Int
 }
