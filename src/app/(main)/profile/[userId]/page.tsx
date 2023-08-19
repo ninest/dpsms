@@ -1,6 +1,9 @@
 import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
+import { Tenancy } from "@/components/Tenancy";
+import { HostListing } from "@/components/host-listing";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
+import { tenancyService } from "@/services/tenancy-service";
 import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
@@ -25,6 +28,9 @@ export default async function UserProfilePage({ params }: Props) {
   const dbUser = await usersService.getUserByClerkId(clerkId);
   const isCurrentUsersPage = dbUser.id === params.userId;
 
+  const tenancies = dbUser.tenancies;
+  console.log(tenancies);
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
@@ -45,15 +51,13 @@ export default async function UserProfilePage({ params }: Props) {
               {hostListings.map((listing) => {
                 const numTenantRequests = listing.tenantRequestListing.length;
                 return (
-                  <Link key={listing.id} href={`/hosts/${listing.id}`} className="block border bg-gray-100 rounded p-3">
-                    <b>{user.address}</b>
-                    <div>Available: {listing.timings}</div>
-                    <div>
-                      {listing.sizeDescription} {listing.sqft}sqft
-                    </div>
-                    <div>{listing.qualifiers}</div>
-                    <div>{numTenantRequests} tenants have requested</div>
-                  </Link>
+                  <HostListing
+                    id={listing.id}
+                    address={listing.address}
+                    timings={listing.timings}
+                    qualifiers={listing.qualifiers}
+                    numTenantsRequested={numTenantRequests}
+                  />
                 );
               })}
             </div>
@@ -114,7 +118,31 @@ export default async function UserProfilePage({ params }: Props) {
             })}
           </div>
 
-          <Title level={2}>My tenancies</Title>
+          {!!tenancies && (
+            <>
+              <Title level={2}>My tenancies</Title>
+              {tenancies.length == 0 ? (
+                <>
+                  <div>No tenancies</div>
+                </>
+              ) : (
+                <>
+                  <div className="mt-2 space-y-4">
+                    {tenancies.map((t) => (
+                      <Tenancy
+                        id={t.id}
+                        address={t.hostListing.address}
+                        startTime={t.startTime}
+                        endTime={t.endTime}
+                        sqft={t.sqft}
+                        itemsDescription={t.itemsDescription}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          )}
         </>
       )}
     </>
