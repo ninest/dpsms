@@ -7,12 +7,11 @@ export const mapboxService = {
         const location = search_text.trim().replaceAll(" ", "+");
 
         const url = `https://api.mapbox.com/search/searchbox/v1/suggest?q=${location}&language=${language}&session_token=${sessionToken}&access_token=${accessToken}`;
-        console.log(url);
+
         try {
             const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
                 return data;
             } else {
                 throw new Error(`Request failed with status: ${response.status}`);
@@ -26,14 +25,13 @@ export const mapboxService = {
         const location = search_text.trim().replaceAll(" ", "%20");
 
         const url = `https://api.mapbox.com/search/geocode/v6/forward?q=${location}&access_token=${accessToken}`;
-        console.log(url);
 
         try {
             const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
-                return data;
+                const { latitude, longitude } = data.features[0].properties.coordinates;
+                return { latitude, longitude };
             } else {
                 throw new Error(`Request failed with status: ${response.status}`);
             }

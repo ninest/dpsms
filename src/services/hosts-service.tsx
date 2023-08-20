@@ -11,6 +11,8 @@ export const hostsService = {
       sizeDescription?: string | undefined;
       image?: string | undefined;
       address: string;
+      latitude: number;
+      longitude: number;
     }
   ) {
     const dbUser = await usersService.getUserByClerkId(clerkId);
