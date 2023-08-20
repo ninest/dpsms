@@ -6,6 +6,7 @@ import { mapboxService } from "@/services/mapbox-service";
 export async function searchLocationAction(params: SearchFormData) {
     searchFormSchema.parse(params);
 
-    await mapboxService.getSearchboxService(params.location);
-    await mapboxService.getForwardGeocoding(params.location);
+    const { latitude, longitude } = await mapboxService.getForwardGeocoding(params.location);
+
+    return { latitude, longitude }
 }
