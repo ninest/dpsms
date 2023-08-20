@@ -43,6 +43,22 @@ export const hostsService = {
     });
     return hostListing;
   },
+  async getHostListings() {
+    const hostListings = await prisma.hostListing.findMany({
+      include: {
+        host: {
+          include: {
+            user: {
+              include: {
+                trustedBy: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return hostListings;
+  },
   async getTenantRequests(hostListingId: string) {
     const tenancyRequest = await prisma.tenantRequestListing.findMany({
       where: {
