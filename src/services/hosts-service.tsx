@@ -11,6 +11,8 @@ export const hostsService = {
       sizeDescription?: string | undefined;
       image?: string | undefined;
       address: string;
+      latitude: number;
+      longitude: number;
     }
   ) {
     const dbUser = await usersService.getUserByClerkId(clerkId);
@@ -40,6 +42,22 @@ export const hostsService = {
       },
     });
     return hostListing;
+  },
+  async getHostListings() {
+    const hostListings = await prisma.hostListing.findMany({
+      include: {
+        host: {
+          include: {
+            user: {
+              include: {
+                trustedBy: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return hostListings;
   },
   async getTenantRequests(hostListingId: string) {
     const tenancyRequest = await prisma.tenantRequestListing.findMany({

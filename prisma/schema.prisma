@@ -67,6 +67,8 @@ model HostListing {
   host       HostUser @relation(fields: [hostUserId], references: [id])
   hostUserId String
   address    String
+  latitude   Float
+  longitude  Float
 
   // Drop off between
   // dropOff DateTime
