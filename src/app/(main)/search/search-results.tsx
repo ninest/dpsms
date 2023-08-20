@@ -1,9 +1,9 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { HostListing } from "@/types";
 
 interface Props {
-  hostListings: [];
+  hostListings: HostListing[];
 }
 
 export function SearchResult({ hostListings }: Props) {
