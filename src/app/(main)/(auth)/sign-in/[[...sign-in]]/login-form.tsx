@@ -1,40 +1,42 @@
 "use client";
 
-import { AuthForm, authFormSchema } from "@/app/(auth)/auth-schemas";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { LoginForm, loginFormSchema } from "../../auth-schemas";
+import { useSignIn } from "@clerk/nextjs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { loginAction } from "../../auth-actions";
 
-export function SignUpForm() {
-  const { isLoaded, signUp, setActive } = useSignUp();
+export default function LoginForm() {
+  const { isLoaded, signIn, setActive } = useSignIn();
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
-  const form = useForm<AuthForm>({
-    resolver: zodResolver(authFormSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const form = useForm<LoginForm>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
+    console.log(data);
     try {
-      const result = await signUp?.create({
-        emailAddress: data.email,
+      const result = await signIn?.create({
+        identifier: data.email,
         password: data.password,
       });
-      console.log(result)
+      console.log(result);
       if (result?.status === "complete" && result.createdSessionId) {
-        setActive?.({ session: result.createdSessionId });
+        await setActive?.({ session: result.createdSessionId });
+        await loginAction();
+      } else {
+        console.error(result);
       }
     } catch (error: any) {
       console.error(error);
-      setErrorMessage(error.errors[0].longMessage);
+      setErrorMessage(error.errors?.[0]?.longMessage ?? error.message);
     }
   });
 
@@ -79,7 +81,7 @@ export function SignUpForm() {
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}
-          <Button>Create my account</Button>
+          <Button>Login</Button>
         </form>
       </Form>
     </>

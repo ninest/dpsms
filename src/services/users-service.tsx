@@ -131,7 +131,14 @@ export const usersService = {
       address: dbUser.address,
     };
   },
-  async createUser(params: { email: string; firstName: string; lastName: string; password: string }) {},
+  async createUser(params: { clerkId: string }) {
+    await prisma.user.create({
+      data: {
+        clerkId: params.clerkId,
+        address: "",
+      },
+    });
+  },
   // Determine if the user has completed their profile
   async profileComplete(clerkId: string) {
     const clerkUser = await clerkClient.users.getUser(clerkId);
