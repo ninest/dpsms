@@ -1,13 +1,19 @@
+import { clerkClient } from "@clerk/nextjs";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const alexander = await getOrCreateClerkUser("changdavidson.alexander@gmail.com");
+  const parth = await getOrCreateClerkUser("parth.kabra@gmail.com");
+  const arjun = await getOrCreateClerkUser("junar9989@gmail.com");
+  const james = await getOrCreateClerkUser("chang-davidson.j@husky.neu.edu");
+
   const user1 = await prisma.user.upsert({
-    where: { clerkId: "abcdefgh" },
+    where: { clerkId: alexander.id },
     update: {},
     create: {
-      clerkId: "abcdefgh",
+      clerkId: alexander.id,
       address: "1 King Street",
       hostUser: {
         create: {
@@ -60,10 +66,10 @@ async function main() {
   });
 
   const user2 = await prisma.user.upsert({
-    where: { clerkId: "abcabcdef" },
+    where: { clerkId: parth.id },
     update: {},
     create: {
-      clerkId: "abcabcdef",
+      clerkId: parth.id,
       address: "1 Queen Street",
       hostUser: {
         create: {
@@ -135,6 +141,19 @@ async function main() {
       },
     },
   });
+}
+
+async function getOrCreateClerkUser(email: string) {
+  // Seems to be no way to get user by email ...
+  const users = await clerkClient.users.getUserList();
+  let user = users.find((user) => {
+    const emails = user.emailAddresses.map((ea) => ea.emailAddress);
+    return emails.includes(email);
+  });
+  if (!user) {
+    user = await clerkClient.users.createUser({ emailAddress: [email], password: email });
+  }
+  return user;
 }
 
 main()
