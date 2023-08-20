@@ -16,6 +16,8 @@ async function main() {
             create: [
               {
                 address: "1 King Street",
+                longitude: -71.092938,
+                latitude: 42.338533,
                 timings: "9am - 5pm",
                 sqft: 1000,
                 sizeDescription: "Small",
@@ -33,6 +35,8 @@ async function main() {
               },
               {
                 address: "28 Flatiron Way",
+                longitude: -71.092938,
+                latitude: 42.338533,
                 timings: "9am - 5pm",
                 sqft: 250,
                 sizeDescription: "Quaint little corner in my closet",
@@ -41,6 +45,8 @@ async function main() {
 
               {
                 address: "945 Jackabrian Avenue",
+                longitude: -71.092938,
+                latitude: 42.338533,
                 timings: "6-10pm on weekdays",
                 sqft: 100,
                 sizeDescription: "Spare room in my brother's car",
@@ -66,6 +72,8 @@ async function main() {
             create: [
               {
                 address: "1 Queen Street",
+                longitude: -71.092938,
+                latitude: 42.338533,
                 timings: "10am - 1pm on weekends",
                 sqft: 2500,
                 sizeDescription: "Huge room in my mom's basement for you to store all your goodies!",
@@ -84,6 +92,8 @@ async function main() {
 
               {
                 address: "9756 Horroscope Avenue",
+                longitude: -71.092938,
+                latitude: 42.338533,
                 timings: "9am - 9pm",
                 sqft: 175,
                 sizeDescription: "A small spare room in my attic that can fit a few boxes",
@@ -92,6 +102,8 @@ async function main() {
 
               {
                 address: "4625 1st Street",
+                longitude: -71.092938,
+                latitude: 42.338533,
                 timings: "24/7 access",
                 sqft: 10000,
                 sizeDescription: "Huge warehouse with lots of space",
@@ -100,6 +112,8 @@ async function main() {
 
               {
                 address: "1234 Water Bottle Avenue",
+                longitude: -71.092938,
+                latitude: 42.338533,
                 timings: "8 pm - 8 am",
                 sqft: 50,
                 sizeDescription: "Small closet space that can fit a couple boxes or a person if you're able to fit",
@@ -108,6 +122,8 @@ async function main() {
 
               {
                 address: "1234 Water Bottle Avenue",
+                longitude: -71.092938,
+                latitude: 42.338533,
                 timings: "8 pm - 8 am",
                 sqft: 67,
                 sizeDescription: "Small area in the basement beside the furnace and washing machines",
