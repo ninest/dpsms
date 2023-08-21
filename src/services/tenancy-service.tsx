@@ -36,6 +36,11 @@ export const tenancyService = {
     const tenancies = await prisma.tenancy.findMany({
       include: {
         hostListing: true,
+        moverUsers: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
     return tenancies;

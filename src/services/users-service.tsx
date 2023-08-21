@@ -26,10 +26,12 @@ export const usersService = {
                     tenantRequestListing: true,
                   },
                 },
+                moverUsers: true,
               },
             },
           },
         },
+        moverUser: true,
       },
     });
 
