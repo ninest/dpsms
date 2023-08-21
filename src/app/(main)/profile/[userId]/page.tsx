@@ -133,26 +133,28 @@ export default async function UserProfilePage({ children, params }: Props) {
 
                   <Title level={2}>My tenancies</Title>
                   <Spacer className="h-3" />
-                  {tenancies.length == 0 ? (
-                    <>
-                      <Empty>No tenancies yet</Empty>
-                    </>
-                  ) : (
-                    <>
-                      <div className="space-y-4">
-                        {tenancies.map((t) => (
-                          <Tenancy
-                            id={t.id}
-                            address={t.hostListing.address}
-                            startTime={t.startTime}
-                            endTime={t.endTime}
-                            sqft={t.sqft}
-                            itemsDescription={t.itemsDescription}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
+                  <div className="max-w-[80ch]">
+                    {tenancies.length == 0 ? (
+                      <>
+                        <Empty>No tenancies yet</Empty>
+                      </>
+                    ) : (
+                      <>
+                        <div className="space-y-4">
+                          {tenancies.map((t) => (
+                            <Tenancy
+                              id={t.id}
+                              address={t.hostListing.address}
+                              startTime={t.startTime}
+                              endTime={t.endTime}
+                              sqft={t.sqft}
+                              itemsDescription={t.itemsDescription}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </>
               )}
             </>
@@ -161,34 +163,36 @@ export default async function UserProfilePage({ children, params }: Props) {
         <TabsContent value="mover">
           <Title level={2}>All tenancies</Title>
           <Spacer className="h-3" />
-          {allTenancies.length == 0 ? (
-            <>
-              <Empty>No tenancies yet</Empty>
-            </>
-          ) : (
-            <>
-              <div className="max-w-[80ch] space-y-4">
-                {allTenancies.map((t) => (
-                  <div key={t.id}>
-                    <Tenancy
-                      id={t.id}
-                      address={t.hostListing.address}
-                      startTime={t.startTime}
-                      endTime={t.endTime}
-                      sqft={t.sqft}
-                      itemsDescription={t.itemsDescription}
-                      className="rounded-br-none"
-                    />
-                    <form className="flex justify-end">
-                      <Button variant={"secondary"} size="sm" className="rounded-t-none">
-                        Become a mover
-                      </Button>
-                    </form>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+          <div className="max-w-[80ch]">
+            {allTenancies.length == 0 ? (
+              <>
+                <Empty>No tenancies yet</Empty>
+              </>
+            ) : (
+              <>
+                <div className="max-w-[80ch] space-y-4">
+                  {allTenancies.map((t) => (
+                    <div key={t.id}>
+                      <Tenancy
+                        id={t.id}
+                        address={t.hostListing.address}
+                        startTime={t.startTime}
+                        endTime={t.endTime}
+                        sqft={t.sqft}
+                        itemsDescription={t.itemsDescription}
+                        className="rounded-br-none"
+                      />
+                      <form className="flex justify-end">
+                        <Button variant={"secondary"} size="sm" className="rounded-t-none">
+                          Become a mover
+                        </Button>
+                      </form>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </>
