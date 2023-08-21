@@ -1,4 +1,5 @@
 import { ProfileForm } from "@/app/(main)/profile/profile-form";
+import { Spacer } from "@/components/spacer";
 import { Title } from "@/components/typography/title";
 import { usersService } from "@/services/users-service";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
@@ -12,9 +13,13 @@ export default async function ProfilePage() {
 
   return (
     <>
-      <main className="p-3">
+      <main>
         <Title level={1}>{!isProfileComplete ? `Complete your profile` : `${user.firstName}'s profile`}</Title>
-        <ProfileForm initialProfile={user} />
+        <Spacer className="h-4" />
+
+        <div className="max-w-[80ch]">
+          <ProfileForm initialProfile={user} />
+        </div>
       </main>
     </>
   );

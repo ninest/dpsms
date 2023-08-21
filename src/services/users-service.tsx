@@ -21,11 +21,17 @@ export const usersService = {
           include: {
             tenancies: {
               include: {
-                hostListing: true,
+                hostListing: {
+                  include: {
+                    tenantRequestListing: true,
+                  },
+                },
+                moverUsers: true,
               },
             },
           },
         },
+        moverUser: true,
       },
     });
 
@@ -52,8 +58,19 @@ export const usersService = {
                 tenantRequestListing: {
                   include: {
                     tenantRequest: true,
+                    hostListing: true,
                   },
                 },
+                host: {
+                  include: {
+                    user: {
+                      include: {
+                        trustedBy: true,
+                      },
+                    },
+                  },
+                },
+                tenancy: true,
               },
             },
           },

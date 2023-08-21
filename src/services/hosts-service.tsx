@@ -60,6 +60,7 @@ export const hostsService = {
             },
           },
         },
+        tenancy: true,
         tenantRequestListing: true,
       },
       where: qualifiers ? {

@@ -11,6 +11,9 @@ import { toHtmlInputDate } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useAuth } from "@clerk/nextjs";
+import Link from "next/link";
+import { Spacer } from "@/components/spacer";
 
 interface Props {
   hostListingId: string;
@@ -18,6 +21,9 @@ interface Props {
 }
 
 export function TenantForm({ hostListingId, suggestions }: Props) {
+  const { sessionId } = useAuth();
+  const isAuthed = !!sessionId;
+
   const form = useForm<TenantRequestForm>({
     resolver: zodResolver(tenantRequestFormSchema),
     defaultValues: {
@@ -167,7 +173,17 @@ export function TenantForm({ hostListingId, suggestions }: Props) {
               </FormItem>
             )}
           />
-          <Button>Request tenancy</Button>
+          {isAuthed}
+          {isAuthed ? (
+            <Button>Request tenancy</Button>
+          ) : (
+            <>
+            <Spacer className="h-2"/>
+            <Link href="/sign-in" className="underline">
+              Log in before creating a tenancy
+            </Link>
+            </>
+          )}
         </form>
       </Form>
     </>

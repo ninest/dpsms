@@ -11,103 +11,103 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 interface Props {
-    defaultAddress: string;
+  defaultAddress: string;
 }
 
 export function SearchForm({ defaultAddress }: Props) {
-    const router = useRouter();
-    const form = useForm<SearchFormData>({
-        resolver: zodResolver(searchFormSchema),
-        defaultValues: {
-            location: defaultAddress,
-            qualifiers: [],
-        },
-    });
+  const router = useRouter();
+  const form = useForm<SearchFormData>({
+    resolver: zodResolver(searchFormSchema),
+    defaultValues: {
+      location: defaultAddress,
+      qualifiers: [],
+    },
+  });
 
-    const onSubmit = form.handleSubmit(async (data) => {
-        try {
-            const { latitude, longitude } = await searchLocationAction(data);
+  const onSubmit = form.handleSubmit(async (data) => {
+    try {
+      const { latitude, longitude } = await searchLocationAction(data);
 
-            const queryParams = new URLSearchParams({
-                latitude: latitude,
-                longitude: longitude,
-                location: data.location,
-            });
-            for (const qualifier of data.qualifiers) {
-                queryParams.append('qualifiers', qualifier);
-            }
+      const queryParams = new URLSearchParams({
+        latitude: latitude,
+        longitude: longitude,
+        location: data.location,
+      });
+      for (const qualifier of data.qualifiers) {
+        queryParams.append("qualifiers", qualifier);
+      }
 
-            // Convert the array of qualifiers into a comma-separated string
-            // const qualifiersString = data.qualifiers.join(",");
-            // Add the qualifiers string to the query parameters
-            // queryParams.append("qualifiers", qualifiersString);
+      // Convert the array of qualifiers into a comma-separated string
+      // const qualifiersString = data.qualifiers.join(",");
+      // Add the qualifiers string to the query parameters
+      // queryParams.append("qualifiers", qualifiersString);
 
-            console.log(`/search?${queryParams}`);
-            router.push(`/search?${queryParams}`);
-        } catch (error) {
-            // Handle error here
-            console.error("An error occurred:", error);
-        }
-    });
+      console.log(`/search?${queryParams}`);
+      router.push(`/search?${queryParams}`);
+    } catch (error) {
+      // Handle error here
+      console.error("An error occurred:", error);
+    }
+  });
 
-    return (
-        <div>
-            <Form {...form}>
-                <form onSubmit={onSubmit} className="space-y-4">
-                    <FormField
-                        control={form.control}
-                        name="location"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-base">Location</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="qualifiers"
-                        render={() => (
-                            <FormItem>
-                                <div className="mb-4">
-                                    <FormLabel className="text-base">Qualifiers</FormLabel>
-                                    <FormDescription>Select all qualifiers you need.</FormDescription>
-                                </div>
-                                {qualifiers.map((item) => (
-                                    <FormField
-                                        key={item}
-                                        control={form.control}
-                                        name="qualifiers"
-                                        render={({ field }) => {
-                                            return (
-                                                <FormItem key={item} className="flex flex-row items-start space-x-3 space-y-0">
-                                                    <FormControl>
-                                                        <Checkbox
-                                                            checked={field.value?.includes(item)}
-                                                            onCheckedChange={(checked) => {
-                                                                return checked
-                                                                    ? field.onChange([...field.value, item])
-                                                                    : field.onChange(field.value?.filter((value) => value !== item));
-                                                            }}
-                                                        />
-                                                    </FormControl>
-                                                    <FormLabel className="font-normal">{item}</FormLabel>
-                                                </FormItem>
-                                            );
-                                        }}
-                                    />
-                                ))}
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+  return (
+    <div>
+      <Form {...form}>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-base">Location</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="qualifiers"
+            render={() => (
+              <FormItem>
+                <div className="mb-4">
+                  <FormLabel className="text-base">Qualifiers</FormLabel>
+                  <FormDescription>Select all qualifiers you need.</FormDescription>
+                </div>
+                {qualifiers.map((item) => (
+                  <FormField
+                    key={item}
+                    control={form.control}
+                    name="qualifiers"
+                    render={({ field }) => {
+                      return (
+                        <FormItem key={item} className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(item)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, item])
+                                  : field.onChange(field.value?.filter((value) => value !== item));
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">{item}</FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-                    <Button>Search</Button>
-                </form>
-            </Form>
-        </div>
-    );
+          <Button>Search</Button>
+        </form>
+      </Form>
+    </div>
+  );
 }
