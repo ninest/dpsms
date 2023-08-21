@@ -1,4 +1,5 @@
 import { HostForm } from "@/app/(main)/new-host/host-form";
+import { Spacer } from "@/components/spacer";
 import { Title } from "@/components/typography/title";
 import { usersService } from "@/services/users-service";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
@@ -16,7 +17,10 @@ export default async function NewHostPage() {
   return (
     <>
       <Title level={1}>New host listing</Title>
-      <HostForm defaultAddress={address} />
+      <Spacer className="h-4" />
+      <div className="max-w-[80ch]">
+        <HostForm defaultAddress={address} />
+      </div>
     </>
   );
 }
