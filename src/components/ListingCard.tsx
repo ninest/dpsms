@@ -19,7 +19,7 @@ export async function ListingCard({ id, address, hostClerkId, hostTrustedBy, sqf
     <Link href={`/hosts/${id}`}>
       <Card className="w-[300px] h-[200px]">
         <CardHeader>
-          <CardTitle>{address}</CardTitle>
+          <CardTitle className="truncate">{address}</CardTitle>
           <CardDescription className="flex flex-row items-center">
             {host.firstName} · <LucideHeartHandshake className="w-4 mx-1" /> {hostTrustedBy}
           </CardDescription>
@@ -29,7 +29,7 @@ export async function ListingCard({ id, address, hostClerkId, hostTrustedBy, sqf
             <LucideRuler className="w-4 mr-2" />
             {sqft} sqft
           </div>
-          <div className="flex flex-row mb-1 items-center">
+          <div className="flex flex-row mb-1 items-center truncate">
             <LucideClock className="w-4 mr-2" />
             {timings}
           </div>

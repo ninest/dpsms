@@ -48,7 +48,6 @@ export const hostsService = {
     });
     return hostListing;
   },
-
   async getHostListings(options?: GetHostListingsOptions) {
     const { qualifiers, includeUserTrustedBy } = options || {};
 
