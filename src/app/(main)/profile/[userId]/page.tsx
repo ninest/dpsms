@@ -49,7 +49,7 @@ export default async function UserProfilePage({ children, params }: Props) {
 
       <Spacer className="h-2" />
 
-      <Tabs defaultValue="account">
+      <Tabs defaultValue="host">
         <TabsList>
           {roles.map((role) => (
             <TabsTrigger key={role.slug} value={role.slug}>
@@ -89,7 +89,6 @@ export default async function UserProfilePage({ children, params }: Props) {
           )}
         </TabsContent>
         <TabsContent value="tenant">
-          {" "}
           {isCurrentUsersPage && (
             <>
               <Title level={2}>My requests</Title>
