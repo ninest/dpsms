@@ -1,7 +1,8 @@
 "use client";
 
+import { cn } from "@/utils";
 import { currentUser, useClerk, useUser } from "@clerk/nextjs";
-import { LucideSearch } from "lucide-react";
+import { LucideRefrigerator, LucideSearch } from "lucide-react";
 import Link from "next/link";
 import { ComponentProps } from "react";
 
@@ -13,8 +14,9 @@ export function Navbar() {
 
   return (
     <header className="flex items-center justify-between p-5 border-b">
-      <Link className="font-extrabold" href="/">
-        DPSMS
+      <Link href="/" className="font-extrabold flex items-center space-x-3">
+        <LucideRefrigerator className="w-5" />
+        {/* DPSMS */}
       </Link>
       <nav>
         <ul className="flex items-center space-x-5">
@@ -30,7 +32,7 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <NavbarLink href="/sign-in">Log in</NavbarLink>
+              <NavbarLink href="/sign-in" variant="primary">Log in</NavbarLink>
               <NavbarLink href="/sign-up">Sign up</NavbarLink>
             </>
           )}
@@ -42,11 +44,18 @@ export function Navbar() {
 
 interface NavbarLinkProps extends ComponentProps<"div"> {
   href: string;
+  variant?: "default" | "primary";
 }
-function NavbarLink({ href, children }: NavbarLinkProps) {
+function NavbarLink({ href, variant = "default", children }: NavbarLinkProps) {
   return (
     <li>
-      <Link href={href} className="block">
+      <Link
+        href={href}
+        className={cn("block -mx-2 -my-0.5 px-2 py-0.5 rounded-md font-medium", {
+          "hover:bg-gray-50": variant === "default",
+          "bg-indigo-600 text-indigo-50 hover:bg-indigo-700": variant === "primary",
+        })}
+      >
         {children}
       </Link>
     </li>
