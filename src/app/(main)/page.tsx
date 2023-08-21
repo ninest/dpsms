@@ -11,6 +11,7 @@ export default async function Home() {
   let dbUser;
 
   const { userId: clerkId } = auth();
+  const isAuthenticated = !!clerkId;
   if (clerkId) {
     dbUser = await usersService.getUserByClerkId(clerkId);
     welcomeMessage = `Welcome back, ${dbUser.firstName}!`;
@@ -28,17 +29,24 @@ export default async function Home() {
         <Spacer className="h-2" />
         <div className="space-y-1">
           <p>A decentralized storage network designed to store your stuff.</p>
-          <p className="text-gray-500 text-sm">
-            You are currently not logged in.{" "}
-            <span className="text-gray-700">
-              <Link href={"/sign-in"} className="underline">
-                Log in
-              </Link>{"  "}
-              <Link href={"/sign-up"} className="underline">
-                Sign up
-              </Link>
-            </span>
-          </p>
+          {isAuthenticated ? (
+            <></>
+          ) : (
+            <>
+              <p className="text-gray-500 text-sm">
+                You are currently not logged in.{" "}
+                <span className="text-gray-700">
+                  <Link href={"/sign-in"} className="underline">
+                    Log in
+                  </Link>
+                  {"  "}
+                  <Link href={"/sign-up"} className="underline">
+                    Sign up
+                  </Link>
+                </span>
+              </p>
+            </>
+          )}
         </div>
       </div>
 

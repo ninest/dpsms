@@ -54,6 +54,15 @@ export const usersService = {
                     tenantRequest: true,
                   },
                 },
+                host: {
+                  include: {
+                    user: {
+                      include: {
+                        trustedBy: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },

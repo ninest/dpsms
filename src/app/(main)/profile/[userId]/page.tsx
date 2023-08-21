@@ -1,6 +1,8 @@
 import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
+import { ListingCard } from "@/components/ListingCard";
 import { Tenancy } from "@/components/Tenancy";
 import { HostListing } from "@/components/host-listing";
+import { Spacer } from "@/components/spacer";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
 import { tenancyService } from "@/services/tenancy-service";
@@ -42,21 +44,27 @@ export default async function UserProfilePage({ params }: Props) {
         </Button>
       </div>
 
+      <Spacer className="h-6" />
+
       {!!hostListings?.length && (
         <>
           <div>
-            <Title level={2}>Host listings</Title>
+            <Title level={2}>My Host listings</Title>
 
-            <div className="">
+            <Spacer className="h-2" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
               {hostListings.map((listing) => {
                 const numTenantRequests = listing.tenantRequestListing.length;
                 return (
-                  <HostListing
+                  <ListingCard
                     id={listing.id}
                     address={listing.address}
                     timings={listing.timings}
                     qualifiers={listing.qualifiers}
-                    numTenantsRequested={numTenantRequests}
+                    hostClerkId={listing.host.user.clerkId}
+                    hostTrustedBy={listing.host.user.trustedBy.length}
+                    sqft={listing.sqft}
                   />
                 );
               })}
@@ -64,6 +72,8 @@ export default async function UserProfilePage({ params }: Props) {
           </div>
         </>
       )}
+
+      <Spacer className="h-4" />
 
       {isCurrentUsersPage && (
         <>
