@@ -1,3 +1,4 @@
+import { becomeMoverForTenancyAction } from "@/app/mover-actions";
 import { roles } from "@/app/role-utils";
 import { ListingCard } from "@/components/ListingCard";
 import { Tenancy } from "@/components/Tenancy";
@@ -7,6 +8,7 @@ import { TenancyRequest } from "@/components/tenancy-request";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { moversService } from "@/services/movers-service";
 import { tenancyService } from "@/services/tenancy-service";
 import { usersService } from "@/services/users-service";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
@@ -36,7 +38,16 @@ export default async function UserProfilePage({ children, params }: Props) {
 
   const tenancies = dbUser.tenancies;
 
-  const allTenancies = await tenancyService.getTenancies();
+  // Filter out tenancies I am already helping move
+  const allTenancies = (await tenancyService.getTenancies()).filter((t) => {
+    const inMoverUser = t.moverUsers.some((u) => u.user.clerkId === clerkId);
+    return !inMoverUser;
+  });
+
+  const moverUserTenancies = await moversService.getMoverTenancies(clerkId);
+
+  const isActiveHost = await usersService.isActiveHost(clerkId);
+  const defaultActiveTab = isActiveHost ? "host" : "tenant";
 
   return (
     <>
@@ -51,7 +62,7 @@ export default async function UserProfilePage({ children, params }: Props) {
 
       <Spacer className="h-2" />
 
-      <Tabs defaultValue="host">
+      <Tabs defaultValue={defaultActiveTab}>
         <TabsList>
           {roles.map((role) => (
             <TabsTrigger key={role.slug} value={role.slug}>
@@ -61,6 +72,14 @@ export default async function UserProfilePage({ children, params }: Props) {
         </TabsList>
         <Spacer className="h-2" />
         <TabsContent value="host">
+          {!isActiveHost && (
+            <p>
+              <Link href={`/profile/edit`}>
+                You are not an active host. To become a host, please change your settings on the{" "}
+                <span className="underline">edit profile page</span>.
+              </Link>
+            </p>
+          )}
           {!!hostListings?.length && (
             <>
               <div>
@@ -136,7 +155,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                   <div className="max-w-[80ch]">
                     {tenancies.length == 0 ? (
                       <>
-                        <Empty>No tenancies yet</Empty>
+                        <Empty>No tenancies to help move</Empty>
                       </>
                     ) : (
                       <>
@@ -149,6 +168,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                               endTime={t.endTime}
                               sqft={t.sqft}
                               itemsDescription={t.itemsDescription}
+                              movers={t.moverUsers.map((mu) => mu.userId)}
                             />
                           ))}
                         </div>
@@ -161,6 +181,36 @@ export default async function UserProfilePage({ children, params }: Props) {
           )}
         </TabsContent>
         <TabsContent value="mover">
+          <Title level={2}>Tenancies I'm helping move</Title>
+          <Spacer className="h-3" />
+
+          <div className="max-w-[80ch]">
+            {moverUserTenancies.length == 0 ? (
+              <>
+                <Empty>No tenancies yet</Empty>
+              </>
+            ) : (
+              <>
+                <div className="max-w-[80ch] space-y-4">
+                  {moverUserTenancies.map((t) => (
+                    <Tenancy
+                      key={t.id}
+                      id={t.id}
+                      address={t.hostListing.address}
+                      startTime={t.startTime}
+                      endTime={t.endTime}
+                      sqft={t.sqft}
+                      itemsDescription={t.itemsDescription}
+                      movers={t.moverUsers.map((mu) => mu.userId)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          <Spacer className="h-6" />
+
           <Title level={2}>All tenancies</Title>
           <Spacer className="h-3" />
           <div className="max-w-[80ch]">
@@ -180,9 +230,11 @@ export default async function UserProfilePage({ children, params }: Props) {
                         endTime={t.endTime}
                         sqft={t.sqft}
                         itemsDescription={t.itemsDescription}
+                        movers={t.moverUsers.map((mu) => mu.userId)}
                         className="rounded-br-none"
                       />
-                      <form className="flex justify-end">
+                      <form action={becomeMoverForTenancyAction} className="flex justify-end">
+                        <input type="hidden" name="tenancyId" value={t.id} />
                         <Button variant={"secondary"} size="sm" className="rounded-t-none">
                           Become a mover
                         </Button>

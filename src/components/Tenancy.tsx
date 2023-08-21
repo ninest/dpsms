@@ -1,8 +1,6 @@
 import { Spacer } from "@/components/spacer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn, formatDate } from "@/utils";
-import { request } from "http";
-import { LucideRuler, LucideClock } from "lucide-react";
+import { cn, formatDate, pluralize } from "@/utils";
+import { LucideBox, LucideClock, LucideRuler } from "lucide-react";
 import { ComponentProps } from "react";
 
 interface Props extends ComponentProps<"div"> {
@@ -12,13 +10,14 @@ interface Props extends ComponentProps<"div"> {
   endTime: Date;
   sqft: number;
   itemsDescription: string;
+  movers: string[];
 }
 
-export function Tenancy({ id, address, startTime, endTime, sqft, itemsDescription, className }: Props) {
+export function Tenancy({ id, address, startTime, endTime, sqft, itemsDescription, movers, className }: Props) {
   return (
     <div className={cn("border rounded-md p-5", className)}>
       <div>
-        <b>{address}</b>
+        <b>{itemsDescription}</b> at {address}
       </div>
       <Spacer className="h-2" />
       <div className="text-sm">
@@ -29,6 +28,12 @@ export function Tenancy({ id, address, startTime, endTime, sqft, itemsDescriptio
           <LucideClock className="w-4" />
           <div>
             {formatDate(startTime)} to {formatDate(endTime)}
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <LucideBox className="w-4" />
+          <div>
+            {movers.length} {pluralize(movers.length, "mover", "movers")}
           </div>
         </div>
       </div>
