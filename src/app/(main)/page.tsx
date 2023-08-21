@@ -35,7 +35,7 @@ export default async function Home() {
         <Title level={1}>{welcomeMessage}</Title>
       </div> */}
       <div className="border rounded-md p-6">
-        <div className="flex justify-between align-top">
+        <div className="lg:flex justify-between align-top">
           <div>
             <h1 className="font-semibold text-2xl">DPSMS</h1>
             <Spacer className="h-2" />
