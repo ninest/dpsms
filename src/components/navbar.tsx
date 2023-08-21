@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ComponentProps } from "react";
 
 export function Navbar() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const isAuthenticated = !!user;
 
   const { signOut } = useClerk();
@@ -18,26 +18,30 @@ export function Navbar() {
         <LucideRefrigerator className="w-5" />
         {/* DPSMS */}
       </Link>
-      <nav>
-        <ul className="flex items-center space-x-5">
-          {isAuthenticated ? (
-            <>
-              <NavbarLink href="/search">
-                <LucideSearch className="w-5" />
-              </NavbarLink>
-              <NavbarLink href="/profile">
-                {user.firstName} {user.lastName}
-              </NavbarLink>
-              <button onClick={() => signOut()}>Sign out</button>
-            </>
-          ) : (
-            <>
-              <NavbarLink href="/sign-in" variant="primary">Log in</NavbarLink>
-              <NavbarLink href="/sign-up">Sign up</NavbarLink>
-            </>
-          )}
-        </ul>
-      </nav>
+      {isLoaded && (
+        <nav>
+          <ul className="flex items-center space-x-5">
+            {isAuthenticated ? (
+              <>
+                <NavbarLink href="/search">
+                  <LucideSearch className="w-5" />
+                </NavbarLink>
+                <NavbarLink href="/profile">
+                  {user.firstName} {user.lastName}
+                </NavbarLink>
+                <button onClick={() => signOut()}>Sign out</button>
+              </>
+            ) : (
+              <>
+                <NavbarLink href="/sign-in" variant="primary">
+                  Log in
+                </NavbarLink>
+                <NavbarLink href="/sign-up">Sign up</NavbarLink>
+              </>
+            )}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 }

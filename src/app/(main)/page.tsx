@@ -36,9 +36,12 @@ export default async function Home() {
           {isAuthenticated ? (
             <>
               {!isProfileComplete && (
-                <Link href={"/profile"} className="text-gray-500 text-sm">
-                  Your profile is incomplete. Go to your <span className="underline">profile page</span> to complete it!
-                </Link>
+                <p>
+                  <Link href={"/profile"} className="text-gray-500 text-sm">
+                    Your profile is incomplete. Go to your <span className="underline">profile page</span> to complete
+                    it!
+                  </Link>
+                </p>
               )}
               {isActiveHost ? (
                 <>
@@ -48,9 +51,11 @@ export default async function Home() {
                   </Button>
                 </>
               ) : (
-                <p className="text-gray-500 text-sm">
-                  You are not a host. To create a host listing, go to your{" "}
-                  <span className="underline">profile page</span> and become an active host.
+                <p>
+                  <Link href={"/profile"} className="text-gray-500 text-sm">
+                    You are not a host. To create a host listing, go to your{" "}
+                    <span className="underline">profile page</span> and become an active host.
+                  </Link>
                 </p>
               )}
             </>
