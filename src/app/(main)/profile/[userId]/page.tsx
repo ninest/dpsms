@@ -1,23 +1,29 @@
-import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
+import { roles } from "@/app/role-utils";
+import { ListingCard } from "@/components/ListingCard";
 import { Tenancy } from "@/components/Tenancy";
-import { HostListing } from "@/components/host-listing";
+import { Empty } from "@/components/empty";
+import { Spacer } from "@/components/spacer";
+import { TenancyRequest } from "@/components/tenancy-request";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { tenancyService } from "@/services/tenancy-service";
 import { usersService } from "@/services/users-service";
-import { cn } from "@/utils";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
-import { LucideCheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Fragment, ReactNode } from "react";
 
 interface Props {
+  children: ReactNode;
   params: {
     userId: string;
   };
 }
 
-export default async function UserProfilePage({ params }: Props) {
+export default async function UserProfilePage({ children, params }: Props) {
+  // if (!params.tab) return redirect(`/profile`)
+
   const { userId: clerkId } = auth();
   // TODO: determine if this page is public
   if (!clerkId) return redirectToSignIn();
@@ -29,7 +35,8 @@ export default async function UserProfilePage({ params }: Props) {
   const isCurrentUsersPage = dbUser.id === params.userId;
 
   const tenancies = dbUser.tenancies;
-  console.log(tenancies);
+
+  const allTenancies = await tenancyService.getTenancies();
 
   return (
     <>
@@ -42,93 +49,130 @@ export default async function UserProfilePage({ params }: Props) {
         </Button>
       </div>
 
-      {!!hostListings?.length && (
-        <>
-          <div>
-            <Title level={2}>Host listings</Title>
+      <Spacer className="h-2" />
 
-            <div className="">
-              {hostListings.map((listing) => {
-                const numTenantRequests = listing.tenantRequestListing.length;
-                return (
-                  <HostListing
-                    id={listing.id}
-                    address={listing.address}
-                    timings={listing.timings}
-                    qualifiers={listing.qualifiers}
-                    numTenantsRequested={numTenantRequests}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        </>
-      )}
+      <Tabs defaultValue="host">
+        <TabsList>
+          {roles.map((role) => (
+            <TabsTrigger key={role.slug} value={role.slug}>
+              {role.name}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <Spacer className="h-2" />
+        <TabsContent value="host">
+          {!!hostListings?.length && (
+            <>
+              <div>
+                <Title level={2}>My Host listings</Title>
 
-      {isCurrentUsersPage && (
-        <>
-          <Title level={2}>My requests</Title>
+                <Spacer className="h-2" />
 
-          <div className="mb-4 space-y-2">
-            {user.tenantUser?.requests.map((request) => {
-              return (
-                <div key={request.id} className="border p-3 rounded bg-gray-100">
-                  <div>
-                    <div>
-                      {request.itemsDescription} - {request.sqft}sqft
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {hostListings.map((listing) => {
+                    const numTenantRequests = listing.tenantRequestListing.length;
+                    return (
+                      <ListingCard
+                        id={listing.id}
+                        address={listing.address}
+                        timings={listing.timings}
+                        qualifiers={listing.qualifiers}
+                        hostClerkId={listing.host.user.clerkId}
+                        hostTrustedBy={listing.host.user.trustedBy.length}
+                        sqft={listing.sqft}
+                        numTenancyRequests={listing.tenantRequestListing.length}
+                        numTenancies={listing.tenancy.length}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+        </TabsContent>
+        <TabsContent value="tenant">
+          {isCurrentUsersPage && (
+            <>
+              <Title level={2}>My requests</Title>
 
-                    <div className="space-y-2">
+              <Spacer className="h-3" />
+
+              <div className="max-w-[80ch] grid grid-cols-1 gap-3">
+                {(!user.tenantUser || user.tenantUser?.requests.length === 0) && <Empty>No requests</Empty>}
+
+                {user.tenantUser?.requests.map((request) => {
+                  return (
+                    <Fragment key={request.id}>
                       {request.tenantRequestListing.map((trl) => {
                         return (
-                          <div key={trl.id}>
-                            <b>{trl.hostListing.address}</b>
-
-                            <div>
-                              <div className="flex items-center space-x-2">
-                                <LucideCheckCircle2
-                                  className={cn("text-gray-300", {
-                                    "text-green-600": trl.hostAccepted,
-                                  })}
-                                />
-                                {trl.hostAccepted ? "Host accepted" : "Host pending"}
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <LucideCheckCircle2
-                                  className={cn("text-gray-300", {
-                                    "text-green-600": trl.tenantAccepted,
-                                  })}
-                                />
-                                {trl.tenantAccepted ? "Host accepted" : "Tenant pending"}
-                              </div>
-                              {trl.hostAccepted && (
-                                <form action={acceptTenancyRequestListingAction}>
-                                  <input type="hidden" name="tenancyRequestListingId" value={trl.id} />
-                                  <Button>Accept</Button>
-                                </form>
-                              )}
-                            </div>
-                          </div>
+                          <Link href={`/hosts/${trl.hostListingId}`} className="block">
+                            <TenancyRequest
+                              key={trl.id}
+                              request={{
+                                id: trl.id,
+                                address: trl.hostListing.address,
+                                description: request.itemsDescription,
+                                sqft: request.sqft,
+                                hostAccepted: trl.hostAccepted,
+                                tenantAccepted: trl.tenantAccepted,
+                                startTime: trl.startTime,
+                                endTime: trl.endTime,
+                              }}
+                            />
+                          </Link>
                         );
                       })}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                    </Fragment>
+                  );
+                })}
+              </div>
 
-          {!!tenancies && (
-            <>
-              <Title level={2}>My tenancies</Title>
-              {tenancies.length == 0 ? (
+              {!!tenancies && (
                 <>
-                  <div>No tenancies</div>
+                  <Spacer className="h-6" />
+
+                  <Title level={2}>My tenancies</Title>
+                  <Spacer className="h-3" />
+                  <div className="max-w-[80ch]">
+                    {tenancies.length == 0 ? (
+                      <>
+                        <Empty>No tenancies yet</Empty>
+                      </>
+                    ) : (
+                      <>
+                        <div className="space-y-4">
+                          {tenancies.map((t) => (
+                            <Tenancy
+                              id={t.id}
+                              address={t.hostListing.address}
+                              startTime={t.startTime}
+                              endTime={t.endTime}
+                              sqft={t.sqft}
+                              itemsDescription={t.itemsDescription}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </>
-              ) : (
-                <>
-                  <div className="mt-2 space-y-4">
-                    {tenancies.map((t) => (
+              )}
+            </>
+          )}
+        </TabsContent>
+        <TabsContent value="mover">
+          <Title level={2}>All tenancies</Title>
+          <Spacer className="h-3" />
+          <div className="max-w-[80ch]">
+            {allTenancies.length == 0 ? (
+              <>
+                <Empty>No tenancies yet</Empty>
+              </>
+            ) : (
+              <>
+                <div className="max-w-[80ch] space-y-4">
+                  {allTenancies.map((t) => (
+                    <div key={t.id}>
                       <Tenancy
                         id={t.id}
                         address={t.hostListing.address}
@@ -136,15 +180,21 @@ export default async function UserProfilePage({ params }: Props) {
                         endTime={t.endTime}
                         sqft={t.sqft}
                         itemsDescription={t.itemsDescription}
+                        className="rounded-br-none"
                       />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </>
-      )}
+                      <form className="flex justify-end">
+                        <Button variant={"secondary"} size="sm" className="rounded-t-none">
+                          Become a mover
+                        </Button>
+                      </form>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </>
   );
 }

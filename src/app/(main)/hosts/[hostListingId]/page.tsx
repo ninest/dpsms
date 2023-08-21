@@ -1,13 +1,19 @@
 import { acceptTenantRequestListingAction } from "@/app/(main)/host-actions";
 import { TenantForm } from "@/app/(main)/hosts/[hostListingId]/tenant-form";
+import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
+import { Empty } from "@/components/empty";
+import { Spacer } from "@/components/spacer";
+import { TenancyRequest } from "@/components/tenancy-request";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { hostsService } from "@/services/hosts-service";
 import { tenantsService } from "@/services/tenants-service";
 import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
 import { auth } from "@clerk/nextjs";
-import { LucideCheckCircle2 } from "lucide-react";
+import { LucideCheckCircle2, LucideClock, LucideRuler } from "lucide-react";
+import { Fragment } from "react";
 
 interface Props {
   params: {
@@ -39,123 +45,134 @@ export default async function HostListingPage({ params }: Props) {
       <div>
         {hostUser.firstName} {hostUser.lastName}
       </div>
+
+      <Spacer className="h-1" />
+
       <Title className="mt-1" level={1}>
         {hostListing.address}
       </Title>
 
-      <div className="mt-4 flex items-center space-x-1">
+      <Spacer className="h-6" />
+
+      <div className="flex items-center flex-wrap -mt-1">
         {hostListing.qualifiers.map((qualifier) => (
-          <div key={qualifier} className="px-1 py-0.5 border rounded bg-gray-100">
+          <div key={qualifier} className="mr-1 mt-1 px-1 py-0.5 border rounded-md bg-gray-100 text-sm">
             {qualifier}
           </div>
         ))}
       </div>
 
-      <div className="mt-2 tabular-nums">{hostListing.sqft} sqft</div>
+      <Spacer className="h-3" />
 
-      <div className="mt-2 mb-4 tabular-nums">{hostListing.timings} </div>
+      <div className="tabular-nums flex items-center">
+        <LucideRuler className="w-4 mr-2" />
+        {hostListing.sqft} sqft
+      </div>
+      <Spacer className="h-2" />
+      <div className="mb-4 tabular-nums flex items-center">
+        <LucideClock className="w-4 mr-2" />
+        {hostListing.timings}{" "}
+      </div>
 
-      {isCurrentUserOwner && (
-        <div className="mb-4 p-3 rounded border bg-gray-50">
-          <Title level={3}>Requests</Title>
-          <div className="space-y-2 mt-2">
-            {allTenancyRequests.map((tenancyRequestListing) => {
-              const { itemsDescription, sqft, tenant } = tenancyRequestListing.tenantRequest;
-              return (
-                <div key={tenancyRequestListing.id}>
-                  <div>{tenant.userId}</div>
-                  <b>
-                    {itemsDescription} - {sqft}sqft
-                  </b>
+      <section className="max-w-[80ch]">
+        {isCurrentUserOwner && (
+          <>
+            <Spacer className="h-6" />
+            <Title level={2}>Requests</Title>
+
+            <Spacer className="h-3" />
+
+            {allTenancyRequests.length === 0 && <Empty>No tenancies requested yet</Empty>}
+
+            <div className="space-y-2">
+              {allTenancyRequests.map((trl) => {
+                const { itemsDescription, sqft, tenant } = trl.tenantRequest;
+                const { hostAccepted } = trl;
+                return (
                   <div>
-                    {tenancyRequestListing.startTime.toISOString()} - {tenancyRequestListing.endTime.toISOString()}
-                  </div>
-
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <LucideCheckCircle2
-                        className={cn("text-gray-300", {
-                          "text-green-600": tenancyRequestListing.hostAccepted,
-                        })}
-                      />
-                      {tenancyRequestListing.hostAccepted ? "Host accepted" : "Host pending"}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <LucideCheckCircle2
-                        className={cn("text-gray-300", {
-                          "text-green-600": tenancyRequestListing.tenantAccepted,
-                        })}
-                      />
-                      {tenancyRequestListing.tenantAccepted ? "Host accepted" : "Tenant pending"}
-                    </div>
-                  </div>
-
-                  {!tenancyRequestListing.hostAccepted && (
-                    <div>
-                      <form action={acceptTenantRequestListingAction}>
-                        <input type="hidden" name="tenancyRequestListingId" value={tenancyRequestListing.id} />
-                        <Button>Accept</Button>
+                    <TenancyRequest
+                      key={trl.id}
+                      request={{
+                        id: trl.id,
+                        address: hostListing.address,
+                        description: itemsDescription,
+                        sqft: sqft,
+                        startTime: trl.startTime,
+                        endTime: trl.endTime,
+                        hostAccepted: trl.hostAccepted,
+                        tenantAccepted: trl.tenantAccepted,
+                      }}
+                      className={cn({ "rounded-br-none": !hostAccepted })}
+                    />
+                    {!hostAccepted && (
+                      <form action={acceptTenantRequestListingAction} className="flex justify-end">
+                        <input type="hidden" name="tenancyRequestListingId" value={trl.id} />
+                        <Button variant={"secondary"} size={"sm"} className="rounded-t-none">
+                          Accept tenant
+                        </Button>
                       </form>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {!!myTenancyRequests?.length && (
-        <div className="mb-4 p-3 rounded border bg-gray-50">
-          <Title level={3}>My requests</Title>
-          <div className="space-y-2 mt-2">
-            {myTenancyRequests.map((tenancyRequest) => {
-              return (
-                <div key={tenancyRequest.id}>
-                  <div className="font-bold">
-                    {tenancyRequest.itemsDescription} - {tenancyRequest.sqft} sqft
+                    )}
                   </div>
-                  <div>
-                    {tenancyRequest.tenantRequestListing.map((trl) => {
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {!!myTenancyRequests?.length && (
+          <div>
+            <Title level={2}>My requests</Title>
+            <div className="space-y-2 mt-2">
+              {myTenancyRequests.length === 0 && <Empty>No requests</Empty>}
+              {myTenancyRequests.map((request) => {
+                return (
+                  <Fragment key={request.id}>
+                    {request.tenantRequestListing.map((trl) => {
+                      const { hostAccepted, tenantAccepted } = trl;
                       return (
-                        <div key={trl.id}>
-                          <div>
-                            {trl.startTime.toISOString()} - {trl.endTime.toISOString()}
-                          </div>
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <LucideCheckCircle2
-                                className={cn("text-gray-300", {
-                                  "text-green-600": trl.hostAccepted,
-                                })}
-                              />
-                              {trl.hostAccepted ? "Host accepted" : "Host pending"}
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <LucideCheckCircle2
-                                className={cn("text-gray-300", {
-                                  "text-green-600": trl.tenantAccepted,
-                                })}
-                              />
-                              {trl.tenantAccepted ? "Host accepted" : "Tenant pending"}
-                            </div>
-                          </div>
+                        <div>
+                          <TenancyRequest
+                            key={trl.id}
+                            request={{
+                              id: trl.id,
+                              address: hostListing.address,
+                              description: request.itemsDescription,
+                              sqft: request.sqft,
+                              hostAccepted: trl.hostAccepted,
+                              tenantAccepted: trl.tenantAccepted,
+                              startTime: trl.startTime,
+                              endTime: trl.endTime,
+                            }}
+                            className={cn({ "rounded-br-none": hostAccepted && !tenantAccepted })}
+                          />
+                          {hostAccepted && !tenantAccepted && (
+                            <form action={acceptTenancyRequestListingAction} className="flex justify-end">
+                              <input type="hidden" name="tenancyRequestListingId" value={trl.id} />
+                              <Button variant={"secondary"} size={"sm"} className="rounded-t-none">
+                                Accept host
+                              </Button>
+                            </form>
+                          )}
                         </div>
                       );
                     })}
-                  </div>
-                </div>
-              );
-            })}
+                  </Fragment>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {!isCurrentUserOwner && (
-        <div className="p-3 rounded border bg-gray-50">
-          <TenantForm hostListingId={hostListing.id} suggestions={myTenancyRequestSuggestions} />
-        </div>
-      )}
+        <Spacer className="h-6" />
+
+        {!isCurrentUserOwner && (
+          <Card className="p-5 rounded-md border bg-gray-50">
+            <Title level={3}>Request a tenancy</Title>
+            <Spacer className="h-3" />
+            <TenantForm hostListingId={hostListing.id} suggestions={myTenancyRequestSuggestions} />
+          </Card>
+        )}
+      </section>
     </>
   );
 }

@@ -5,6 +5,7 @@ import { tenancyService } from "@/services/tenancy-service";
 import { tenantsService } from "@/services/tenants-service";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function requestTenancyAction(hostListingId: string, params: TenantRequestForm) {
   const { userId: clerkId } = auth();
@@ -22,4 +23,5 @@ export async function acceptTenancyRequestListingAction(formData: FormData) {
   await tenancyService.createTenancy(tenancyRequestListingId);
 
   revalidatePath("/profile/[userId]");
+  redirect("/profile");
 }
