@@ -86,7 +86,7 @@ export default async function UserProfilePage({ params }: Props) {
 
           <Spacer className="h-3" />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {(!user.tenantUser || user.tenantUser?.requests.length === 0) && <Empty>No requests</Empty>}
 
             {user.tenantUser?.requests.map((request) => {

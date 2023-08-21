@@ -1,18 +1,19 @@
 import { Spacer } from "@/components/spacer";
 import { TenancyRequest } from "@/types";
-import { formatDate } from "@/utils";
+import { cn, formatDate } from "@/utils";
 import { LucideCheckCircle2, LucideCircleDashed, LucideClock, LucideRuler } from "lucide-react";
+import { ComponentProps } from "react";
 
-interface Props {
+interface Props extends ComponentProps<"div"> {
   request: TenancyRequest;
 }
 
-export function TenancyRequest({ request }: Props) {
+export function TenancyRequest({ request, className }: Props) {
   const pending = <LucideCircleDashed className="w-4 text-gray-500" />;
   const accepted = <LucideCheckCircle2 className="text-green-600 w-4" />;
 
   return (
-    <div className="border rounded-md p-5">
+    <div className={cn("border rounded-md p-5", className)}>
       <div>
         <b>{request.description}</b> at {request.address}
       </div>

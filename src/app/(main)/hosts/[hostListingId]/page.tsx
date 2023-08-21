@@ -84,44 +84,32 @@ export default async function HostListingPage({ params }: Props) {
             {allTenancyRequests.length === 0 && <Empty>No tenancies requested yet</Empty>}
 
             <div className="space-y-2">
-              {allTenancyRequests.map((tenancyRequestListing) => {
-                const { itemsDescription, sqft, tenant } = tenancyRequestListing.tenantRequest;
+              {allTenancyRequests.map((trl) => {
+                const { itemsDescription, sqft, tenant } = trl.tenantRequest;
+                const { hostAccepted } = trl;
                 return (
-                  <div key={tenancyRequestListing.id}>
-                    <div>{tenant.userId}</div>
-                    <b>
-                      {itemsDescription} - {sqft}sqft
-                    </b>
-                    <div>
-                      {tenancyRequestListing.startTime.toISOString()} - {tenancyRequestListing.endTime.toISOString()}
-                    </div>
-
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <LucideCheckCircle2
-                          className={cn("text-gray-300", {
-                            "text-green-600": tenancyRequestListing.hostAccepted,
-                          })}
-                        />
-                        {tenancyRequestListing.hostAccepted ? "Host accepted" : "Host pending"}
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <LucideCheckCircle2
-                          className={cn("text-gray-300", {
-                            "text-green-600": tenancyRequestListing.tenantAccepted,
-                          })}
-                        />
-                        {tenancyRequestListing.tenantAccepted ? "Host accepted" : "Tenant pending"}
-                      </div>
-                    </div>
-
-                    {!tenancyRequestListing.hostAccepted && (
-                      <div>
-                        <form action={acceptTenantRequestListingAction}>
-                          <input type="hidden" name="tenancyRequestListingId" value={tenancyRequestListing.id} />
-                          <Button>Accept</Button>
-                        </form>
-                      </div>
+                  <div>
+                    <TenancyRequest
+                      key={trl.id}
+                      request={{
+                        id: trl.id,
+                        address: hostListing.address,
+                        description: itemsDescription,
+                        sqft: sqft,
+                        startTime: trl.startTime,
+                        endTime: trl.endTime,
+                        hostAccepted: trl.hostAccepted,
+                        tenantAccepted: trl.tenantAccepted,
+                      }}
+                      className={cn({ "rounded-br-none": !hostAccepted })}
+                    />
+                    {!hostAccepted && (
+                      <form action={acceptTenantRequestListingAction} className="flex justify-end">
+                        <input type="hidden" name="tenancyRequestListingId" value={trl.id} />
+                        <Button variant={"secondary"} size={"sm"} className="rounded-t-none">
+                          Accept tenant
+                        </Button>
+                      </form>
                     )}
                   </div>
                 );
