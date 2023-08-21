@@ -1,4 +1,8 @@
+import { Spacer } from "@/components/spacer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate } from "@/utils";
+import { request } from "http";
+import { LucideRuler, LucideClock } from "lucide-react";
 
 interface Props {
   id: string;
@@ -11,18 +15,23 @@ interface Props {
 
 export function Tenancy({ id, address, startTime, endTime, sqft, itemsDescription }: Props) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{address}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div>
-          {startTime.toISOString()} to {endTime.toISOString()}
+    <div className="border rounded-md p-5">
+      <div>
+        <b>{address}</b>
+      </div>
+      <Spacer className="h-2" />
+      <div className="text-sm">
+        <div className="flex items-center space-x-2">
+          <LucideRuler className="w-4" /> <div>{sqft} sqft</div>
         </div>
-        <div>
-          {itemsDescription} - {sqft}sqft
+        <div className="flex items-center space-x-2">
+          <LucideClock className="w-4" />
+          <div>
+            {formatDate(startTime)} to {formatDate(endTime)}
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+      <Spacer className="h-2" />
+    </div>
   );
 }
