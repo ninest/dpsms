@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/utils";
-import { currentUser, useClerk, useUser } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { LucideRefrigerator, LucideSearch } from "lucide-react";
 import Link from "next/link";
 import { ComponentProps } from "react";
