@@ -14,6 +14,8 @@ export function Navbar() {
 
   return (
     <header className="flex items-center justify-between p-5 border-b">
+      {/* Goody debugging, don't do this */}
+      {/* {JSON.stringify({ user, isLoaded })} */}
       <Link href="/" className="font-extrabold flex items-center space-x-3">
         <LucideRefrigerator className="w-5" />
         {/* DPSMS */}
