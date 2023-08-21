@@ -56,7 +56,7 @@ export default async function UserProfilePage({ params }: Props) {
 
             <Spacer className="h-2" />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
               {hostListings.map((listing) => {
                 const numTenantRequests = listing.tenantRequestListing.length;
                 return (
@@ -86,7 +86,7 @@ export default async function UserProfilePage({ params }: Props) {
 
           <Spacer className="h-3" />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="max-w-[80ch] grid grid-cols-1 gap-3">
             {(!user.tenantUser || user.tenantUser?.requests.length === 0) && <Empty>No requests</Empty>}
 
             {user.tenantUser?.requests.map((request) => {

@@ -1,5 +1,6 @@
 import { acceptTenantRequestListingAction } from "@/app/(main)/host-actions";
 import { TenantForm } from "@/app/(main)/hosts/[hostListingId]/tenant-form";
+import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
 import { Empty } from "@/components/empty";
 import { Spacer } from "@/components/spacer";
 import { TenancyRequest } from "@/components/tenancy-request";
@@ -120,27 +121,39 @@ export default async function HostListingPage({ params }: Props) {
 
         {!!myTenancyRequests?.length && (
           <div>
-            <Title level={3}>My requests</Title>
+            <Title level={2}>My requests</Title>
             <div className="space-y-2 mt-2">
               {myTenancyRequests.length === 0 && <Empty>No requests</Empty>}
               {myTenancyRequests.map((request) => {
                 return (
                   <Fragment key={request.id}>
                     {request.tenantRequestListing.map((trl) => {
+                      const { hostAccepted, tenantAccepted } = trl;
                       return (
-                        <TenancyRequest
-                          key={trl.id}
-                          request={{
-                            id: trl.id,
-                            address: hostListing.address,
-                            description: request.itemsDescription,
-                            sqft: request.sqft,
-                            hostAccepted: trl.hostAccepted,
-                            tenantAccepted: trl.tenantAccepted,
-                            startTime: trl.startTime,
-                            endTime: trl.endTime,
-                          }}
-                        />
+                        <div>
+                          <TenancyRequest
+                            key={trl.id}
+                            request={{
+                              id: trl.id,
+                              address: hostListing.address,
+                              description: request.itemsDescription,
+                              sqft: request.sqft,
+                              hostAccepted: trl.hostAccepted,
+                              tenantAccepted: trl.tenantAccepted,
+                              startTime: trl.startTime,
+                              endTime: trl.endTime,
+                            }}
+                            className={cn({ "rounded-br-none": hostAccepted && !tenantAccepted })}
+                          />
+                          {hostAccepted && !tenantAccepted && (
+                            <form action={acceptTenancyRequestListingAction} className="flex justify-end">
+                              <input type="hidden" name="tenancyRequestListingId" value={trl.id} />
+                              <Button variant={"secondary"} size={"sm"} className="rounded-t-none">
+                                Accept host
+                              </Button>
+                            </form>
+                          )}
+                        </div>
                       );
                     })}
                   </Fragment>
