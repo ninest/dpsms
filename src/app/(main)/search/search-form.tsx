@@ -29,13 +29,9 @@ export function SearchForm({ defaultAddress }: Props) {
       const { latitude, longitude } = await searchLocationAction(data);
 
       const queryParams = new URLSearchParams({
-        latitude: latitude,
-        longitude: longitude,
         location: data.location,
       });
-      for (const qualifier of data.qualifiers) {
-        queryParams.append("qualifiers", qualifier);
-      }
+      data.qualifiers.forEach((q) => queryParams.append("qualifier", q));
 
       // Convert the array of qualifiers into a comma-separated string
       // const qualifiersString = data.qualifiers.join(",");

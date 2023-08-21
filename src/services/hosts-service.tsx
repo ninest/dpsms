@@ -1,4 +1,5 @@
 import { prisma } from "@/prisma";
+import { mapboxService } from "@/services/mapbox-service";
 import { usersService } from "@/services/users-service";
 
 export const hostsService = {
@@ -44,10 +45,8 @@ export const hostsService = {
     return hostListing;
   },
 
-  async getHostListings(options?: {
-    qualifiers?: string[];
-  }) {
-    const { qualifiers } = options || {};
+  async getHostListings() {
+    // const { qualifiers } = options || {};
 
     const hostListings = await prisma.hostListing.findMany({
       include: {
@@ -55,22 +54,45 @@ export const hostsService = {
           include: {
             user: {
               include: {
-                trustedBy: true
-              }
+                trustedBy: true,
+              },
             },
           },
         },
         tenancy: true,
         tenantRequestListing: true,
       },
-      where: qualifiers ? {
-        qualifiers: {
-          hasEvery: qualifiers,
-        },
-      } : undefined,
     });
-    return hostListings.map(listing => ({ ...listing, numTenantsRequested: listing.tenantRequestListing.length }));
+    return hostListings.map((listing) => ({ ...listing, numTenantsRequested: listing.tenantRequestListing.length }));
   },
+  async searchHostListings(locationQuery: string, options: { qualifiers: string[] }) {
+    const coords = await mapboxService.getForwardGeocoding(locationQuery);
+    const hostListings = await prisma.hostListing.findMany({
+      include: {
+        host: {
+          include: {
+            user: {
+              include: {
+                trustedBy: true,
+              },
+            },
+          },
+        },
+        tenancy: true,
+        tenantRequestListing: true,
+      },
+      where: {
+        qualifiers: {
+          hasSome: options.qualifiers,
+        },
+      },
+    });
+
+    const filteredByCoord = hostListings.filter((hl) => {
+      hl.longitude, hl.latitude;
+    });
+  },
+
   async getTenantRequests(hostListingId: string) {
     const tenancyRequest = await prisma.tenantRequestListing.findMany({
       where: {
