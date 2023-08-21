@@ -52,6 +52,7 @@ export const usersService = {
                 tenantRequestListing: {
                   include: {
                     tenantRequest: true,
+                    hostListing: true,
                   },
                 },
                 host: {

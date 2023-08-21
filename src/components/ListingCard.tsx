@@ -16,17 +16,20 @@ interface Props {
 
 export async function ListingCard({ id, address, hostClerkId, hostTrustedBy, sqft, timings, qualifiers }: Props) {
   const host = await usersService.getUserByClerkId(hostClerkId);
+  const hasQualifiers = qualifiers.length !== 0;
+  const moreThanOneQualifier = qualifiers.length >= 1;
+
   return (
     <Link href={`/hosts/${id}`}>
       <Card className="h-full">
         <CardHeader>
-          <CardTitle className="text-xl">{address}</CardTitle>
+          <CardTitle className="text-base">{address}</CardTitle>
           <CardDescription className="flex flex-row items-center">
-            {host.firstName} · <LucideHeartHandshake className="w-4 mx-1" /> {hostTrustedBy}
+            {host.firstName ?? <i>No name</i>} · <LucideHeartHandshake className="w-4 mx-1" /> {hostTrustedBy}
           </CardDescription>
         </CardHeader>
         <Spacer className="h-3" />
-        <CardContent>
+        <CardContent className="text-sm">
           <div className="flex flex-row mb-1 items-center">
             <LucideRuler className="w-4 mr-2" />
             {sqft} sqft
@@ -37,7 +40,20 @@ export async function ListingCard({ id, address, hostClerkId, hostTrustedBy, sqf
           </div>
           <div className="flex flex-row mb-1 items-center">
             <LucideListChecks className="w-4 mr-2" />
-            {qualifiers.length} qualifier{qualifiers.length === 1 ? "" : "s"}
+            {hasQualifiers ? (
+              <>
+                {moreThanOneQualifier ? (
+                  <>
+                    {qualifiers[0]} and {qualifiers.length - 1} more
+                  </>
+                ) : (
+                  <>{qualifiers[0]}</>
+                )}
+                {/* {qualifiers.length} qualifier{qualifiers.length === 1 ? "" : "s"} */}
+              </>
+            ) : (
+              "No qualifiers"
+            )}
           </div>
         </CardContent>
       </Card>

@@ -2,6 +2,7 @@ import { acceptTenantRequestListingAction } from "@/app/(main)/host-actions";
 import { TenantForm } from "@/app/(main)/hosts/[hostListingId]/tenant-form";
 import { Empty } from "@/components/empty";
 import { Spacer } from "@/components/spacer";
+import { TenancyRequest } from "@/components/tenancy-request";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
 import { auth } from "@clerk/nextjs";
 import { LucideCheckCircle2, LucideClock, LucideRuler } from "lucide-react";
+import { Fragment } from "react";
 
 interface Props {
   params: {
@@ -71,13 +73,17 @@ export default async function HostListingPage({ params }: Props) {
         {hostListing.timings}{" "}
       </div>
 
-      <Spacer className="h-2" />
-
       <section className="max-w-[80ch]">
         {isCurrentUserOwner && (
-          <div className="mb-4 p-3 rounded border bg-gray-50">
-            <Title level={3}>Requests</Title>
-            <div className="space-y-2 mt-2">
+          <>
+            <Spacer className="h-6" />
+            <Title level={2}>Requests</Title>
+
+            <Spacer className="h-3" />
+
+            {allTenancyRequests.length === 0 && <Empty>No tenancies requested yet</Empty>}
+
+            <div className="space-y-2">
               {allTenancyRequests.map((tenancyRequestListing) => {
                 const { itemsDescription, sqft, tenant } = tenancyRequestListing.tenantRequest;
                 return (
@@ -121,55 +127,42 @@ export default async function HostListingPage({ params }: Props) {
                 );
               })}
             </div>
-          </div>
+          </>
         )}
 
         {!!myTenancyRequests?.length && (
-          <div className="mb-4 p-3 rounded border bg-gray-50">
+          <div>
             <Title level={3}>My requests</Title>
             <div className="space-y-2 mt-2">
               {myTenancyRequests.length === 0 && <Empty>No requests</Empty>}
-              {myTenancyRequests.map((tenancyRequest) => {
+              {myTenancyRequests.map((request) => {
                 return (
-                  <div key={tenancyRequest.id}>
-                    <div className="font-bold">
-                      {tenancyRequest.itemsDescription} - {tenancyRequest.sqft} sqft
-                    </div>
-                    <div>
-                      {tenancyRequest.tenantRequestListing.map((trl) => {
-                        return (
-                          <div key={trl.id}>
-                            <div>
-                              {trl.startTime.toISOString()} - {trl.endTime.toISOString()}
-                            </div>
-                            <div>
-                              <div className="flex items-center space-x-2">
-                                <LucideCheckCircle2
-                                  className={cn("text-gray-300", {
-                                    "text-green-600": trl.hostAccepted,
-                                  })}
-                                />
-                                {trl.hostAccepted ? "Host accepted" : "Host pending"}
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <LucideCheckCircle2
-                                  className={cn("text-gray-300", {
-                                    "text-green-600": trl.tenantAccepted,
-                                  })}
-                                />
-                                {trl.tenantAccepted ? "Host accepted" : "Tenant pending"}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                  <Fragment key={request.id}>
+                    {request.tenantRequestListing.map((trl) => {
+                      return (
+                        <TenancyRequest
+                          key={trl.id}
+                          request={{
+                            id: trl.id,
+                            address: hostListing.address,
+                            description: request.itemsDescription,
+                            sqft: request.sqft,
+                            hostAccepted: trl.hostAccepted,
+                            tenantAccepted: trl.tenantAccepted,
+                            startTime: trl.startTime,
+                            endTime: trl.endTime,
+                          }}
+                        />
+                      );
+                    })}
+                  </Fragment>
                 );
               })}
             </div>
           </div>
         )}
+
+        <Spacer className="h-6" />
 
         {!isCurrentUserOwner && (
           <Card className="p-5 rounded-md border bg-gray-50">

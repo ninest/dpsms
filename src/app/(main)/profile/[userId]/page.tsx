@@ -4,6 +4,7 @@ import { Tenancy } from "@/components/Tenancy";
 import { Empty } from "@/components/empty";
 import { HostListing } from "@/components/host-listing";
 import { Spacer } from "@/components/spacer";
+import { TenancyRequest } from "@/components/tenancy-request";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
 import { tenancyService } from "@/services/tenancy-service";
@@ -13,6 +14,7 @@ import { auth, redirectToSignIn } from "@clerk/nextjs";
 import { LucideCheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Fragment } from "react";
 
 interface Props {
   params: {
@@ -45,7 +47,7 @@ export default async function UserProfilePage({ params }: Props) {
         </Button>
       </div>
 
-      <Spacer className="h-4" />
+      <Spacer className="h-6" />
 
       {!!hostListings?.length && (
         <>
@@ -82,66 +84,47 @@ export default async function UserProfilePage({ params }: Props) {
 
           <Spacer className="h-3" />
 
-          <div className="mb-4 space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {(!user.tenantUser || user.tenantUser?.requests.length === 0) && <Empty>No requests</Empty>}
+
             {user.tenantUser?.requests.map((request) => {
               return (
-                <div key={request.id} className="border p-3 rounded bg-gray-100">
-                  <div>
-                    <div>
-                      {request.itemsDescription} - {request.sqft}sqft
-                    </div>
-
-                    <div className="space-y-2">
-                      {request.tenantRequestListing.map((trl) => {
-                        return (
-                          <div key={trl.id}>
-                            <b>{trl.hostListing.address}</b>
-
-                            <div>
-                              <div className="flex items-center space-x-2">
-                                <LucideCheckCircle2
-                                  className={cn("text-gray-300", {
-                                    "text-green-600": trl.hostAccepted,
-                                  })}
-                                />
-                                {trl.hostAccepted ? "Host accepted" : "Host pending"}
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <LucideCheckCircle2
-                                  className={cn("text-gray-300", {
-                                    "text-green-600": trl.tenantAccepted,
-                                  })}
-                                />
-                                {trl.tenantAccepted ? "Host accepted" : "Tenant pending"}
-                              </div>
-                              {trl.hostAccepted && (
-                                <form action={acceptTenancyRequestListingAction}>
-                                  <input type="hidden" name="tenancyRequestListingId" value={trl.id} />
-                                  <Button>Accept</Button>
-                                </form>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+                <Fragment key={request.id}>
+                  {request.tenantRequestListing.map((trl) => {
+                    return (
+                      <TenancyRequest
+                        key={trl.id}
+                        request={{
+                          id: trl.id,
+                          address: trl.hostListing.address,
+                          description: request.itemsDescription,
+                          sqft: request.sqft,
+                          hostAccepted: trl.hostAccepted,
+                          tenantAccepted: trl.tenantAccepted,
+                          startTime: trl.startTime,
+                          endTime: trl.endTime,
+                        }}
+                      />
+                    );
+                  })}
+                </Fragment>
               );
             })}
           </div>
 
           {!!tenancies && (
             <>
+              <Spacer className="h-6" />
+
               <Title level={2}>My tenancies</Title>
+              <Spacer className="h-3" />
               {tenancies.length == 0 ? (
                 <>
-                  <div>No tenancies</div>
+                  <Empty>No tenancies yet</Empty>
                 </>
               ) : (
                 <>
-                  <div className="mt-2 space-y-4">
+                  <div className="space-y-4">
                     {tenancies.map((t) => (
                       <Tenancy
                         id={t.id}
