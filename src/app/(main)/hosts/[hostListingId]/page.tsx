@@ -13,6 +13,7 @@ import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
 import { auth } from "@clerk/nextjs";
 import { LucideCheckCircle2, LucideClock, LucideRuler } from "lucide-react";
+import Link from "next/link";
 import { Fragment } from "react";
 
 interface Props {
@@ -23,6 +24,7 @@ interface Props {
 
 export default async function HostListingPage({ params }: Props) {
   const { userId: clerkId } = auth();
+  const isAuthed = !!clerkId;
 
   const hostListing = await hostsService.getHostListing(params.hostListingId);
   const hostUser = await usersService.getUserByClerkId(hostListing.host.user.clerkId);
@@ -169,7 +171,14 @@ export default async function HostListingPage({ params }: Props) {
           <Card className="p-5 rounded-md border bg-gray-50">
             <Title level={3}>Request a tenancy</Title>
             <Spacer className="h-3" />
-            <TenantForm hostListingId={hostListing.id} suggestions={myTenancyRequestSuggestions} />
+
+            {isAuthed ? (
+              <TenantForm hostListingId={hostListing.id} suggestions={myTenancyRequestSuggestions} />
+            ) : (
+              <Link href={"/sign-in"}>
+                Please <span className="underline">click here to sign in</span> before requesting tenancy
+              </Link>
+            )}
           </Card>
         )}
       </section>

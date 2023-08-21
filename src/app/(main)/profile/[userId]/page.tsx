@@ -46,6 +46,9 @@ export default async function UserProfilePage({ children, params }: Props) {
 
   const moverUserTenancies = await moversService.getMoverTenancies(clerkId);
 
+  const isActiveHost = await usersService.isActiveHost(clerkId);
+  const defaultActiveTab = isActiveHost ? "host" : "tenant";
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
@@ -59,7 +62,7 @@ export default async function UserProfilePage({ children, params }: Props) {
 
       <Spacer className="h-2" />
 
-      <Tabs defaultValue="host">
+      <Tabs defaultValue={defaultActiveTab}>
         <TabsList>
           {roles.map((role) => (
             <TabsTrigger key={role.slug} value={role.slug}>
@@ -69,6 +72,14 @@ export default async function UserProfilePage({ children, params }: Props) {
         </TabsList>
         <Spacer className="h-2" />
         <TabsContent value="host">
+          {!isActiveHost && (
+            <p>
+              <Link href={`/profile/edit`}>
+                You are not an active host. To become a host, please change your settings on the{" "}
+                <span className="underline">edit profile page</span>.
+              </Link>
+            </p>
+          )}
           {!!hostListings?.length && (
             <>
               <div>

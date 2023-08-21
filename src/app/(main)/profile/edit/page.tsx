@@ -16,7 +16,10 @@ export default async function ProfilePage() {
       <main>
         <Title level={1}>{!isProfileComplete ? `Complete your profile` : `${user.firstName}'s profile`}</Title>
         <Spacer className="h-4" />
-        <ProfileForm initialProfile={user} />
+
+        <div className="max-w-[80ch]">
+          <ProfileForm initialProfile={user} />
+        </div>
       </main>
     </>
   );
