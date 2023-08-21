@@ -44,9 +44,9 @@ export default async function HostListingPage({ params }: Props) {
 
   return (
     <>
-      <div>
+      <Link href={`/profile/${hostUser.hostUser?.userId}`}>
         {hostUser.firstName} {hostUser.lastName}
-      </div>
+      </Link>
 
       <Spacer className="h-1" />
 
