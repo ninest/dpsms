@@ -28,7 +28,7 @@ export default async function Home() {
       )}
       <div>
         <Title level={2}>Listings</Title>
-        <div className="flex flex-row overflow-auto">
+        <div className="flex flex-row flex-wrap">
           {listings.map((listing) => {
             return (
               <div key={listing.id} className="m-2">

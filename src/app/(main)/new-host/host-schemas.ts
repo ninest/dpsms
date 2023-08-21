@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { EnumValues, z } from "zod";
 
 export const qualifiers = [
   "Has air conditioning",
@@ -11,7 +11,8 @@ export const qualifiers = [
   "Is locked",
   "Can self access",
 ] as const;
-const qualifiersEnumSchema = z.enum(qualifiers);
+
+export const qualifiersEnumSchema = z.enum(qualifiers);
 
 export const hostFormSchema = z.object({
   timings: z.string().trim().min(1),
