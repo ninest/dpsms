@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LucideRuler, LucideClock, LucideListChecks, LucideHeartHandshake, LucideUser2 } from "lucide-react";
 import { usersService } from "@/services/users-service";
 import { Spacer } from "@/components/spacer";
+import { pluralize } from "@/utils";
 
 interface Props {
   id: string;
@@ -12,6 +13,7 @@ interface Props {
   sqft: number;
   timings: string;
   qualifiers: string[];
+  numTenancyRequests: number;
   numTenancies: number;
 }
 
@@ -23,6 +25,7 @@ export async function ListingCard({
   sqft,
   timings,
   qualifiers,
+  numTenancyRequests,
   numTenancies,
 }: Props) {
   const host = await usersService.getUserByClerkId(hostClerkId);
@@ -68,7 +71,9 @@ export async function ListingCard({
           <Spacer className="h-2" />
           <div className="flex items-center">
             <LucideUser2 className="w-4 mr-2" />
-            {numTenancies === 0 ? "No" : numTenancies} tenancies
+            {numTenancyRequests === 0 ? "No" : numTenancyRequests}{" "}
+            {pluralize(numTenancyRequests, "request", "requests")}, {numTenancies === 0 ? "no" : numTenancies}{" "}
+            {pluralize(numTenancies, "tenancy", "tenancies")}
           </div>
         </CardContent>
       </Card>

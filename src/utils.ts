@@ -13,3 +13,7 @@ export function toHtmlInputDate(date: Date) {
 export function formatDate(date: Date) {
   return format(date, "MMM d, HH:MM");
 }
+
+export function pluralize(count: number, singular: string, plural: string) {
+  return count === 1 ? singular : plural;
+}

@@ -68,6 +68,7 @@ export default async function UserProfilePage({ params }: Props) {
                     hostClerkId={listing.host.user.clerkId}
                     hostTrustedBy={listing.host.user.trustedBy.length}
                     sqft={listing.sqft}
+                    numTenancyRequests={listing.tenantRequestListing.length}
                     numTenancies={listing.tenancy.length}
                   />
                 );

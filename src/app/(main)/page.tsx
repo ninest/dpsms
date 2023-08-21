@@ -110,6 +110,7 @@ export default async function Home() {
                     sqft={listing.sqft}
                     timings={listing.timings}
                     qualifiers={listing.qualifiers}
+                    numTenancyRequests={listing.tenantRequestListing.length}
                     numTenancies={listing.tenancy.length}
                   />
                 </div>

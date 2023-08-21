@@ -21,7 +21,11 @@ export const usersService = {
           include: {
             tenancies: {
               include: {
-                hostListing: true,
+                hostListing: {
+                  include: {
+                    tenantRequestListing: true,
+                  },
+                },
               },
             },
           },
