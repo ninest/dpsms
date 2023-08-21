@@ -1,6 +1,7 @@
 import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
 import { ListingCard } from "@/components/ListingCard";
 import { Tenancy } from "@/components/Tenancy";
+import { Empty } from "@/components/empty";
 import { HostListing } from "@/components/host-listing";
 import { Spacer } from "@/components/spacer";
 import { Title } from "@/components/typography/title";
@@ -73,13 +74,16 @@ export default async function UserProfilePage({ params }: Props) {
         </>
       )}
 
-      <Spacer className="h-4" />
+      <Spacer className="h-6" />
 
       {isCurrentUsersPage && (
         <>
           <Title level={2}>My requests</Title>
 
+          <Spacer className="h-3" />
+
           <div className="mb-4 space-y-2">
+            {(!user.tenantUser || user.tenantUser?.requests.length === 0) && <Empty>No requests</Empty>}
             {user.tenantUser?.requests.map((request) => {
               return (
                 <div key={request.id} className="border p-3 rounded bg-gray-100">

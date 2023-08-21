@@ -6,6 +6,7 @@ import { hostsService } from "@/services/hosts-service";
 import { Spacer } from "@/components/spacer";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Empty } from "@/components/empty";
 
 export default async function Home() {
   let welcomeMessage = "Welcome to DPSMS!";
@@ -94,23 +95,27 @@ export default async function Home() {
 
         <Spacer className="h-2" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {listings.map((listing) => {
-            return (
-              <div key={listing.id}>
-                <ListingCard
-                  id={listing.id}
-                  address={listing.address}
-                  hostClerkId={listing.host.user.clerkId}
-                  hostTrustedBy={listing.host.user.trustedBy.length}
-                  sqft={listing.sqft}
-                  timings={listing.timings}
-                  qualifiers={listing.qualifiers}
-                />
-              </div>
-            );
-          })}
-        </div>
+        {listings.length === 0 ? (
+          <Empty>No host listings</Empty>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {listings.map((listing) => {
+              return (
+                <div key={listing.id}>
+                  <ListingCard
+                    id={listing.id}
+                    address={listing.address}
+                    hostClerkId={listing.host.user.clerkId}
+                    hostTrustedBy={listing.host.user.trustedBy.length}
+                    sqft={listing.sqft}
+                    timings={listing.timings}
+                    qualifiers={listing.qualifiers}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </main>
   );

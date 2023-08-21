@@ -1,5 +1,6 @@
 import { acceptTenantRequestListingAction } from "@/app/(main)/host-actions";
 import { TenantForm } from "@/app/(main)/hosts/[hostListingId]/tenant-form";
+import { Empty } from "@/components/empty";
 import { Spacer } from "@/components/spacer";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
@@ -127,6 +128,7 @@ export default async function HostListingPage({ params }: Props) {
           <div className="mb-4 p-3 rounded border bg-gray-50">
             <Title level={3}>My requests</Title>
             <div className="space-y-2 mt-2">
+              {myTenancyRequests.length === 0 && <Empty>No requests</Empty>}
               {myTenancyRequests.map((tenancyRequest) => {
                 return (
                   <div key={tenancyRequest.id}>
