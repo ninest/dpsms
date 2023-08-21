@@ -44,7 +44,7 @@ export default async function UserProfilePage({ params }: Props) {
         </Button>
       </div>
 
-      <Spacer className="h-6" />
+      <Spacer className="h-4" />
 
       {!!hostListings?.length && (
         <>

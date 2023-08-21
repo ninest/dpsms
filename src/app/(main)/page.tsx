@@ -5,6 +5,7 @@ import { ListingCard } from "@/components/ListingCard";
 import { hostsService } from "@/services/hosts-service";
 import { Spacer } from "@/components/spacer";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   let welcomeMessage = "Welcome to DPSMS!";
@@ -19,6 +20,9 @@ export default async function Home() {
 
   const listings = await hostsService.getHostListings();
 
+  const isProfileComplete = clerkId ? await usersService.profileComplete(clerkId) : false;
+  const isActiveHost = clerkId ? await usersService.isActiveHost(clerkId) : false;
+
   return (
     <main>
       {/* <div className="flex items-center justify-center mb-4">
@@ -30,7 +34,26 @@ export default async function Home() {
         <div className="space-y-1">
           <p>A decentralized storage network designed to store your stuff.</p>
           {isAuthenticated ? (
-            <></>
+            <>
+              {!isProfileComplete && (
+                <Link href={"/profile"} className="text-gray-500 text-sm">
+                  Your profile is incomplete. Go to your <span className="underline">profile page</span> to complete it!
+                </Link>
+              )}
+              {isActiveHost ? (
+                <>
+                  <Spacer className="h-2" />
+                  <Button asChild className="w-full">
+                    <Link href={"new-host"}>New Host Listing</Link>
+                  </Button>
+                </>
+              ) : (
+                <p className="text-gray-500 text-sm">
+                  You are not a host. To create a host listing, go to your{" "}
+                  <span className="underline">profile page</span> and become an active host.
+                </p>
+              )}
+            </>
           ) : (
             <>
               <p className="text-gray-500 text-sm">
@@ -49,15 +72,6 @@ export default async function Home() {
           )}
         </div>
       </div>
-
-      {clerkId && (
-        <>
-          <Spacer className="h-6" />
-          <div>
-            <Title level={2}>My Something</Title>
-          </div>
-        </>
-      )}
 
       <Spacer className="h-6" />
 
