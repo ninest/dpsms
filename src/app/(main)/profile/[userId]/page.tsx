@@ -27,16 +27,17 @@ export default async function UserProfilePage({ children, params }: Props) {
   // if (!params.tab) return redirect(`/profile`)
 
   const { userId: clerkId } = auth();
+  const isAuthed = !!clerkId;
   // TODO: determine if this page is public
-  if (!clerkId) return redirectToSignIn();
+  // if (!clerkId) return redirectToSignIn();
 
   const user = await usersService.getUserById(params.userId).catch(notFound);
   const hostListings = user.hostUser?.listings;
 
-  const dbUser = await usersService.getUserByClerkId(clerkId);
-  const isCurrentUsersPage = dbUser.id === params.userId;
+  const dbUser = clerkId ? await usersService.getUserByClerkId(clerkId) : null;
+  const isCurrentUsersPage = dbUser?.id === params.userId;
 
-  const tenancies = dbUser.tenancies;
+  const tenancies = dbUser?.tenancies;
 
   // Filter out tenancies I am already helping move
   const allTenancies = (await tenancyService.getTenancies()).filter((t) => {
@@ -44,10 +45,12 @@ export default async function UserProfilePage({ children, params }: Props) {
     return !inMoverUser;
   });
 
-  const moverUserTenancies = await moversService.getMoverTenancies(clerkId);
+  const moverUserTenancies = clerkId ? await moversService.getMoverTenancies(clerkId) : null;
 
-  const isActiveHost = await usersService.isActiveHost(clerkId);
-  const defaultActiveTab = isActiveHost ? "host" : "tenant";
+  const isActiveHost = clerkId ? await usersService.isActiveHost(clerkId) : false;
+
+  let defaultActiveTab = isActiveHost ? "host" : "tenant";
+  if (!isAuthed) defaultActiveTab = "host";
 
   return (
     <>
@@ -55,9 +58,11 @@ export default async function UserProfilePage({ children, params }: Props) {
         <Title level={1}>
           {user.firstName} {user.lastName}
         </Title>
-        <Button asChild variant={"secondary"}>
-          <Link href={"/profile/edit"}>Edit profile</Link>
-        </Button>
+        {isCurrentUsersPage && (
+          <Button asChild variant={"secondary"}>
+            <Link href={"/profile/edit"}>Edit profile</Link>
+          </Button>
+        )}
       </div>
 
       <Spacer className="h-2" />
@@ -72,15 +77,19 @@ export default async function UserProfilePage({ children, params }: Props) {
         </TabsList>
         <Spacer className="h-2" />
         <TabsContent value="host">
-          {!isActiveHost && (
+          {isAuthed && (
             <>
-              <p>
-                <Link href={`/profile/edit`}>
-                  You are not an active host. To become a host, please change your settings on the{" "}
-                  <span className="underline">edit profile page</span>.
-                </Link>
-              </p>
-              <Spacer className="h-3" />
+              {!isActiveHost && (
+                <>
+                  <p>
+                    <Link href={`/profile/edit`}>
+                      You are not an active host. To become a host, please change your settings on the{" "}
+                      <span className="underline">edit profile page</span>.
+                    </Link>
+                  </p>
+                  <Spacer className="h-3" />
+                </>
+              )}
             </>
           )}
           {!!hostListings?.length && (
@@ -112,6 +121,16 @@ export default async function UserProfilePage({ children, params }: Props) {
           )}
         </TabsContent>
         <TabsContent value="tenant">
+          {!isAuthed && (
+            <>
+              <p>
+                <Link href="/sign-in">
+                  Please <span className="underline">sign in</span> to view this.
+                </Link>
+              </p>
+              <Spacer className="h-3" />
+            </>
+          )}
           {isCurrentUsersPage && (
             <>
               <Title level={2}>My requests</Title>
@@ -187,14 +206,24 @@ export default async function UserProfilePage({ children, params }: Props) {
           <Spacer className="h-3" />
 
           <div className="max-w-[80ch]">
-            {moverUserTenancies.length == 0 ? (
+            {!isAuthed && (
+              <>
+                <p>
+                  <Link href="/sign-in">
+                    Please <span className="underline">sign in</span> to view this.
+                  </Link>
+                </p>
+                <Spacer className="h-3" />
+              </>
+            )}
+            {moverUserTenancies?.length == 0 ? (
               <>
                 <Empty>No tenancies yet</Empty>
               </>
             ) : (
               <>
                 <div className="max-w-[80ch] space-y-4">
-                  {moverUserTenancies.map((t) => (
+                  {moverUserTenancies?.map((t) => (
                     <Tenancy
                       key={t.id}
                       id={t.id}
@@ -215,6 +244,7 @@ export default async function UserProfilePage({ children, params }: Props) {
 
           <Title level={2}>All tenancies</Title>
           <Spacer className="h-3" />
+
           <div className="max-w-[80ch]">
             {allTenancies.length == 0 ? (
               <>
