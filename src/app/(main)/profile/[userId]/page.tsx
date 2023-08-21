@@ -3,14 +3,12 @@ import { Tenancy } from "@/components/Tenancy";
 import { HostListing } from "@/components/host-listing";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/prisma";
-import { tenancyService } from "@/services/tenancy-service";
 import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
-import { auth, clerkClient, redirectToSignIn } from "@clerk/nextjs";
+import { auth, redirectToSignIn } from "@clerk/nextjs";
 import { LucideCheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: {
@@ -31,13 +29,6 @@ export default async function UserProfilePage({ params }: Props) {
 
   const tenancies = dbUser.tenancies;
   console.log(tenancies);
-
-  const deleteUser = async () => {
-    "use server";
-    await clerkClient.users.deleteUser(clerkId);
-    await prisma.user.delete({ where: { clerkId } });
-    redirect("/sign-up");
-  };
 
   return (
     <>
@@ -153,10 +144,6 @@ export default async function UserProfilePage({ params }: Props) {
           )}
         </>
       )}
-      <form action={deleteUser}>
-        <input type="hidden" name="hi" />
-        <Button>delete account</Button>
-      </form>
     </>
   );
 }
