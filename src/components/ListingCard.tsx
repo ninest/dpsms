@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LucideRuler, LucideClock, LucideListChecks, LucideHeartHandshake } from "lucide-react";
+import { LucideRuler, LucideClock, LucideListChecks, LucideHeartHandshake, LucideUser2 } from "lucide-react";
 import { usersService } from "@/services/users-service";
 import { Spacer } from "@/components/spacer";
 
@@ -12,9 +12,19 @@ interface Props {
   sqft: number;
   timings: string;
   qualifiers: string[];
+  numTenancies: number;
 }
 
-export async function ListingCard({ id, address, hostClerkId, hostTrustedBy, sqft, timings, qualifiers }: Props) {
+export async function ListingCard({
+  id,
+  address,
+  hostClerkId,
+  hostTrustedBy,
+  sqft,
+  timings,
+  qualifiers,
+  numTenancies,
+}: Props) {
   const host = await usersService.getUserByClerkId(hostClerkId);
   const hasQualifiers = qualifiers.length !== 0;
   const moreThanOneQualifier = qualifiers.length >= 1;
@@ -54,6 +64,11 @@ export async function ListingCard({ id, address, hostClerkId, hostTrustedBy, sqf
             ) : (
               "No qualifiers"
             )}
+          </div>
+          <Spacer className="h-2" />
+          <div className="flex items-center">
+            <LucideUser2 className="w-4 mr-2" />
+            {numTenancies === 0 ? "No" : numTenancies} tenancies
           </div>
         </CardContent>
       </Card>

@@ -68,6 +68,7 @@ export default async function UserProfilePage({ params }: Props) {
                     hostClerkId={listing.host.user.clerkId}
                     hostTrustedBy={listing.host.user.trustedBy.length}
                     sqft={listing.sqft}
+                    numTenancies={listing.tenancy.length}
                   />
                 );
               })}
@@ -92,19 +93,21 @@ export default async function UserProfilePage({ params }: Props) {
                 <Fragment key={request.id}>
                   {request.tenantRequestListing.map((trl) => {
                     return (
-                      <TenancyRequest
-                        key={trl.id}
-                        request={{
-                          id: trl.id,
-                          address: trl.hostListing.address,
-                          description: request.itemsDescription,
-                          sqft: request.sqft,
-                          hostAccepted: trl.hostAccepted,
-                          tenantAccepted: trl.tenantAccepted,
-                          startTime: trl.startTime,
-                          endTime: trl.endTime,
-                        }}
-                      />
+                      <Link href={`/hosts/${trl.hostListingId}`} className="block">
+                        <TenancyRequest
+                          key={trl.id}
+                          request={{
+                            id: trl.id,
+                            address: trl.hostListing.address,
+                            description: request.itemsDescription,
+                            sqft: request.sqft,
+                            hostAccepted: trl.hostAccepted,
+                            tenantAccepted: trl.tenantAccepted,
+                            startTime: trl.startTime,
+                            endTime: trl.endTime,
+                          }}
+                        />
+                      </Link>
                     );
                   })}
                 </Fragment>

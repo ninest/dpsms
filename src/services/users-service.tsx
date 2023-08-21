@@ -64,6 +64,7 @@ export const usersService = {
                     },
                   },
                 },
+                tenancy: true,
               },
             },
           },

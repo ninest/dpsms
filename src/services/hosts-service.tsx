@@ -55,6 +55,7 @@ export const hostsService = {
             },
           },
         },
+        tenancy: true,
       },
     });
     return hostListings;
