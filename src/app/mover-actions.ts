@@ -1,7 +1,8 @@
-"use server"
+"use server";
 
+import { redirectToLogin } from "@/app/toast-utils";
 import { moversService } from "@/services/movers-service";
-import { auth, redirectToSignIn } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 export async function becomeMoverForTenancyAction(formData: FormData) {
@@ -9,7 +10,7 @@ export async function becomeMoverForTenancyAction(formData: FormData) {
   if (!tenancyId) throw new Error("No tenancyId provided");
 
   const { userId: clerkId } = auth();
-  if (!clerkId) return redirectToSignIn();
+  if (!clerkId) return redirectToLogin();
 
   await moversService.addMoverToTenancy(clerkId, tenancyId);
   revalidatePath("/profile/[profileId]");

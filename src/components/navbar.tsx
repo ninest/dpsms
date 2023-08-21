@@ -59,7 +59,7 @@ function NavbarLink({ href, variant = "default", children }: NavbarLinkProps) {
         href={href}
         className={cn("block -mx-2 -my-0.5 px-2 py-0.5 rounded-md font-medium", {
           "hover:bg-gray-50": variant === "default",
-          "bg-indigo-600 text-indigo-50 hover:bg-indigo-700": variant === "primary",
+          "bg-gray-900 text-gray-50 hover:bg-gray-900/90": variant === "primary",
         })}
       >
         {children}

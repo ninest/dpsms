@@ -44,9 +44,9 @@ export default async function HostListingPage({ params }: Props) {
 
   return (
     <>
-      <div>
+      <Link href={`/profile/${hostUser.hostUser?.userId}`}>
         {hostUser.firstName} {hostUser.lastName}
-      </div>
+      </Link>
 
       <Spacer className="h-1" />
 
@@ -91,9 +91,8 @@ export default async function HostListingPage({ params }: Props) {
                 const { itemsDescription, sqft, tenant } = trl.tenantRequest;
                 const { hostAccepted } = trl;
                 return (
-                  <div>
+                  <div key={trl.id}>
                     <TenancyRequest
-                      key={trl.id}
                       request={{
                         id: trl.id,
                         address: hostListing.address,
@@ -132,9 +131,8 @@ export default async function HostListingPage({ params }: Props) {
                     {request.tenantRequestListing.map((trl) => {
                       const { hostAccepted, tenantAccepted } = trl;
                       return (
-                        <div>
+                        <div key={trl.id}>
                           <TenancyRequest
-                            key={trl.id}
                             request={{
                               id: trl.id,
                               address: hostListing.address,
