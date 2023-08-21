@@ -7,6 +7,7 @@ import { TenancyRequest } from "@/components/tenancy-request";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { tenancyService } from "@/services/tenancy-service";
 import { usersService } from "@/services/users-service";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
 import Link from "next/link";
@@ -34,7 +35,8 @@ export default async function UserProfilePage({ children, params }: Props) {
   const isCurrentUsersPage = dbUser.id === params.userId;
 
   const tenancies = dbUser.tenancies;
-  console.log(tenancies);
+
+  const allTenancies = await tenancyService.getTenancies();
 
   return (
     <>
@@ -156,7 +158,38 @@ export default async function UserProfilePage({ children, params }: Props) {
             </>
           )}
         </TabsContent>
-        <TabsContent value="mover">Make changes to your account here.</TabsContent>
+        <TabsContent value="mover">
+          <Title level={2}>All tenancies</Title>
+          <Spacer className="h-3" />
+          {allTenancies.length == 0 ? (
+            <>
+              <Empty>No tenancies yet</Empty>
+            </>
+          ) : (
+            <>
+              <div className="max-w-[80ch] space-y-4">
+                {allTenancies.map((t) => (
+                  <div key={t.id}>
+                    <Tenancy
+                      id={t.id}
+                      address={t.hostListing.address}
+                      startTime={t.startTime}
+                      endTime={t.endTime}
+                      sqft={t.sqft}
+                      itemsDescription={t.itemsDescription}
+                      className="rounded-br-none"
+                    />
+                    <form className="flex justify-end">
+                      <Button variant={"secondary"} size="sm" className="rounded-t-none">
+                        Become a mover
+                      </Button>
+                    </form>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </TabsContent>
       </Tabs>
     </>
   );

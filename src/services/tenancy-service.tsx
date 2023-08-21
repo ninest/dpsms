@@ -32,4 +32,12 @@ export const tenancyService = {
     });
     return tenancy;
   },
+  async getTenancies() {
+    const tenancies = await prisma.tenancy.findMany({
+      include: {
+        hostListing: true,
+      },
+    });
+    return tenancies;
+  },
 };

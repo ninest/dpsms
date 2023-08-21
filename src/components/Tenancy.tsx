@@ -1,10 +1,11 @@
 import { Spacer } from "@/components/spacer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDate } from "@/utils";
+import { cn, formatDate } from "@/utils";
 import { request } from "http";
 import { LucideRuler, LucideClock } from "lucide-react";
+import { ComponentProps } from "react";
 
-interface Props {
+interface Props extends ComponentProps<"div"> {
   id: string;
   address: string;
   startTime: Date;
@@ -13,9 +14,9 @@ interface Props {
   itemsDescription: string;
 }
 
-export function Tenancy({ id, address, startTime, endTime, sqft, itemsDescription }: Props) {
+export function Tenancy({ id, address, startTime, endTime, sqft, itemsDescription, className }: Props) {
   return (
-    <div className="border rounded-md p-5">
+    <div className={cn("border rounded-md p-5", className)}>
       <div>
         <b>{address}</b>
       </div>
