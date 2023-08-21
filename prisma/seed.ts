@@ -141,10 +141,63 @@ async function main() {
       },
     },
   });
+
+  const arjunDB = await prisma.user.upsert({
+    where: { clerkId: arjun.id },
+    update: {},
+    create: {
+      clerkId: arjun.id,
+      address: "16 Banana Street",
+    },
+  });
+
+  const jamesDB = await prisma.user.upsert({
+    where: { clerkId: james.id },
+    update: {},
+    create: {
+      clerkId: james.id,
+      address: "17 Rocket Ray",
+    },
+  });
+
+  const trusts = await prisma.trust.createMany({
+    data: [
+      {
+        trusterId: alexanderDB.id,
+        targetId: parthDB.id,
+        amountPercent: 100,
+      },
+      {
+        trusterId: alexanderDB.id,
+        targetId: arjunDB.id,
+        amountPercent: 50,
+      },
+      {
+        trusterId: alexanderDB.id,
+        targetId: jamesDB.id,
+        amountPercent: 75,
+      },
+      {
+        trusterId: parthDB.id,
+        targetId: alexanderDB.id,
+        amountPercent: 75,
+      },
+      {
+        trusterId: parthDB.id,
+        targetId: arjunDB.id,
+        amountPercent: 100,
+      },
+      {
+        trusterId: jamesDB.id,
+        targetId: alexanderDB.id,
+        amountPercent: 100,
+      },
+    ],
+  });
 }
 
+// Seems to be no way to get user by email ... so we do it manually
 async function getOrCreateClerkUser(email: string) {
-  // Seems to be no way to get user by email ...
   const users = await clerkClient.users.getUserList();
   let user = users.find((user) => {
     const emails = user.emailAddresses.map((ea) => ea.emailAddress);
