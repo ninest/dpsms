@@ -3,6 +3,7 @@ import { Title } from "@/components/typography/title";
 import { usersService } from "@/services/users-service";
 import { ListingCard } from "@/components/ListingCard";
 import { hostsService } from "@/services/hosts-service";
+import { Spacer } from "@/components/spacer";
 
 export default async function Home() {
   let welcomeMessage = "Welcome to DPSMS!";
@@ -26,12 +27,18 @@ export default async function Home() {
           <Title level={2}>My Something</Title>
         </div>
       )}
+
+      <Spacer className="h-4" />
+
       <div>
         <Title level={2}>Listings</Title>
-        <div className="flex flex-row flex-wrap">
+
+        <Spacer className="h-2" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {listings.map((listing) => {
             return (
-              <div key={listing.id} className="m-2">
+              <div key={listing.id}>
                 <ListingCard
                   id={listing.id}
                   address={listing.address}
