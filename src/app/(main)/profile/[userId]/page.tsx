@@ -3,6 +3,7 @@ import { Tenancy } from "@/components/Tenancy";
 import { HostListing } from "@/components/host-listing";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
+import { tenancyService } from "@/services/tenancy-service";
 import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
