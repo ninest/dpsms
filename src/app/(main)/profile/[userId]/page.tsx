@@ -1,28 +1,26 @@
-import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
 import { ListingCard } from "@/components/ListingCard";
 import { Tenancy } from "@/components/Tenancy";
 import { Empty } from "@/components/empty";
-import { HostListing } from "@/components/host-listing";
 import { Spacer } from "@/components/spacer";
 import { TenancyRequest } from "@/components/tenancy-request";
 import { Title } from "@/components/typography/title";
 import { Button } from "@/components/ui/button";
-import { tenancyService } from "@/services/tenancy-service";
 import { usersService } from "@/services/users-service";
-import { cn } from "@/utils";
 import { auth, redirectToSignIn } from "@clerk/nextjs";
-import { LucideCheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Fragment } from "react";
+import { Fragment, ReactNode } from "react";
 
 interface Props {
+  children: ReactNode;
   params: {
     userId: string;
   };
 }
 
-export default async function UserProfilePage({ params }: Props) {
+export default async function UserProfilePage({ children, params }: Props) {
+  // if (!params.tab) return redirect(`/profile`)
+
   const { userId: clerkId } = auth();
   // TODO: determine if this page is public
   if (!clerkId) return redirectToSignIn();
@@ -146,6 +144,10 @@ export default async function UserProfilePage({ params }: Props) {
           )}
         </>
       )}
+
+      <Spacer className="h-2" />
+
+      {children}
     </>
   );
 }
