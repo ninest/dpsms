@@ -22,11 +22,11 @@ export function HostListing({ id, address, timings, qualifiers, numTenantsReques
         <CardContent>
           <div>{timings}</div>
           <div>
-            {qualifiers.map((q) => (
-              <ul className="list-disc ml-6">
+            <ul className="list-disc ml-6">
+              {qualifiers.map((q) => (
                 <li key={q}>{q}</li>
-              </ul>
-            ))}
+              ))}
+            </ul>
           </div>
           <div className="mt-4">{numTenantsRequested} tenants have requested</div>
         </CardContent>

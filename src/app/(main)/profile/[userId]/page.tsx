@@ -104,6 +104,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                     {hostListings.map((listing) => {
                       return (
                         <ListingCard
+                          key={listing.id}
                           id={listing.id}
                           address={listing.address}
                           timings={listing.timings}
@@ -146,9 +147,8 @@ export default async function UserProfilePage({ children, params }: Props) {
                       <Fragment key={request.id}>
                         {request.tenantRequestListing.map((trl) => {
                           return (
-                            <Link href={`/hosts/${trl.hostListingId}`} className="block">
+                            <Link key={trl.id} href={`/hosts/${trl.hostListingId}`} className="block">
                               <TenancyRequest
-                                key={trl.id}
                                 request={{
                                   id: trl.id,
                                   address: trl.hostListing.address,
@@ -184,6 +184,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                           <div className="space-y-4">
                             {tenancies.map((t) => (
                               <Tenancy
+                                key={t.id}
                                 id={t.id}
                                 address={t.hostListing.address}
                                 startTime={t.startTime}
@@ -290,6 +291,7 @@ export default async function UserProfilePage({ children, params }: Props) {
             {hostListings?.map((listing) => {
               return (
                 <ListingCard
+                  key={listing.id}
                   id={listing.id}
                   address={listing.address}
                   timings={listing.timings}

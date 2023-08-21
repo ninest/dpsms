@@ -91,9 +91,8 @@ export default async function HostListingPage({ params }: Props) {
                 const { itemsDescription, sqft, tenant } = trl.tenantRequest;
                 const { hostAccepted } = trl;
                 return (
-                  <div>
+                  <div key={trl.id}>
                     <TenancyRequest
-                      key={trl.id}
                       request={{
                         id: trl.id,
                         address: hostListing.address,
@@ -132,9 +131,8 @@ export default async function HostListingPage({ params }: Props) {
                     {request.tenantRequestListing.map((trl) => {
                       const { hostAccepted, tenantAccepted } = trl;
                       return (
-                        <div>
+                        <div key={trl.id}>
                           <TenancyRequest
-                            key={trl.id}
                             request={{
                               id: trl.id,
                               address: hostListing.address,
