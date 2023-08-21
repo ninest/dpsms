@@ -73,23 +73,25 @@ export default async function UserProfilePage({ children, params }: Props) {
         <Spacer className="h-2" />
         <TabsContent value="host">
           {!isActiveHost && (
-            <p>
-              <Link href={`/profile/edit`}>
-                You are not an active host. To become a host, please change your settings on the{" "}
-                <span className="underline">edit profile page</span>.
-              </Link>
-            </p>
+            <>
+              <p>
+                <Link href={`/profile/edit`}>
+                  You are not an active host. To become a host, please change your settings on the{" "}
+                  <span className="underline">edit profile page</span>.
+                </Link>
+              </p>
+              <Spacer className="h-3" />
+            </>
           )}
           {!!hostListings?.length && (
             <>
               <div>
-                <Title level={2}>My Host listings</Title>
+                <Title level={2}>Host listings</Title>
 
                 <Spacer className="h-2" />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                   {hostListings.map((listing) => {
-                    const numTenantRequests = listing.tenantRequestListing.length;
                     return (
                       <ListingCard
                         id={listing.id}
