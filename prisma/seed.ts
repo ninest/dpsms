@@ -202,6 +202,22 @@ async function main() {
     create: {
       clerkId: james.id,
       address: "17 Rocket Ray",
+      tenantUser: {
+        create: {
+          tenancies: {
+            create: [
+              {
+                hostListing: { connect: { id: alexanderListing2.id } },
+                startTime: new Date("2023-05-01T00:00:00.000Z"),
+                endTime: new Date("2023-09-01T00:00:00.000Z"),
+                itemsDescription:
+                  "A few boxes of kitchen items and clothing, a vacuum cleaner, a bike, a few boxes of books, and a bed",
+                sqft: 50,
+              },
+            ],
+          },
+        },
+      },
     },
   });
 
