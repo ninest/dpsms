@@ -47,6 +47,8 @@ model MoverUser {
 
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique
+
+  tenancies Tenancy[]
 }
 
 model Trust {
@@ -129,4 +131,6 @@ model Tenancy {
 
   itemsDescription String
   sqft             Int
+
+  moverUsers MoverUser[]
 }
