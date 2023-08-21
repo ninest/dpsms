@@ -1,11 +1,6 @@
 import { prisma } from "@/prisma";
 import { usersService } from "@/services/users-service";
 
-type GetHostListingsOptions = {
-  qualifiers?: string[];
-  includeUserTrustedBy?: boolean;
-};
-
 export const hostsService = {
   async createListing(
     clerkId: string,
@@ -48,30 +43,32 @@ export const hostsService = {
     });
     return hostListing;
   },
-  async getHostListings(options?: GetHostListingsOptions) {
-    const { qualifiers, includeUserTrustedBy } = options || {};
 
-    const query = {
+  async getHostListings(options?: {
+    qualifiers?: string[];
+  }) {
+    const { qualifiers } = options || {};
+
+    const hostListings = await prisma.hostListing.findMany({
       include: {
         host: {
           include: {
-            user: includeUserTrustedBy ? { include: { trustedBy: true } } : true,
-          },
-        },
-      },
-      where: {
-        qualifiers: {
-          some: {
-            value: {
-              in: qualifiers,
+            user: {
+              include: {
+                trustedBy: true
+              }
             },
           },
         },
+        tenantRequestListing: true,
       },
-    };
-
-    const hostListings = await prisma.hostListing.findMany(query);
-    return hostListings;
+      where: qualifiers ? {
+        qualifiers: {
+          hasEvery: qualifiers,
+        },
+      } : undefined,
+    });
+    return hostListings.map(listing => ({ ...listing, numTenantsRequested: listing.tenantRequestListing.length }));
   },
   async getTenantRequests(hostListingId: string) {
     const tenancyRequest = await prisma.tenantRequestListing.findMany({

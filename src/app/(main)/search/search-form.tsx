@@ -33,12 +33,14 @@ export function SearchForm({ defaultAddress }: Props) {
                 longitude: longitude,
                 location: data.location,
             });
+            for (const qualifier of data.qualifiers) {
+                queryParams.append('qualifiers', qualifier);
+            }
 
             // Convert the array of qualifiers into a comma-separated string
-            const qualifiersString = data.qualifiers.join(",");
-
+            // const qualifiersString = data.qualifiers.join(",");
             // Add the qualifiers string to the query parameters
-            queryParams.append("qualifiers", qualifiersString);
+            // queryParams.append("qualifiers", qualifiersString);
 
             console.log(`/search?${queryParams}`);
             router.push(`/search?${queryParams}`);
