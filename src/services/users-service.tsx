@@ -1,4 +1,5 @@
 import { prisma } from "@/prisma";
+import { calculateTrust } from "@/utils";
 import { clerkClient } from "@clerk/nextjs/server";
 
 // TODO: User type
@@ -107,6 +108,7 @@ export const usersService = {
           },
         },
         moverUser: true,
+        trustedBy: true,
       },
     });
     const clerkUser = await clerkClient.users.getUser(dbUser.clerkId);
@@ -118,10 +120,23 @@ export const usersService = {
       lastName: clerkUser.lastName,
       address: dbUser.address,
       isActiveHost: dbUser.hostUser?.isActive ?? false,
-      hostUser: dbUser.hostUser,
+      hostUser: {
+        ...dbUser.hostUser,
+        listings: dbUser.hostUser?.listings.map((listing) => ({
+          ...listing,
+          host: {
+            ...listing.host,
+            user: {
+              ...listing.host.user,
+              trustScore: calculateTrust(listing.host.user.trustedBy),
+            },
+          },
+        })),
+      },
       tenantUser: dbUser.tenantUser,
       moverUser: dbUser.moverUser,
       tenancies: dbUser.tenantUser?.tenancies,
+      trustScore: calculateTrust(dbUser.trustedBy),
     };
   },
   async updateUser(

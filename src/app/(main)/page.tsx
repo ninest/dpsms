@@ -131,7 +131,7 @@ export default async function Home() {
                     id={listing.id}
                     address={listing.address}
                     hostClerkId={listing.host.user.clerkId}
-                    hostTrustedBy={listing.host.user.trustedBy.length}
+                    hostTrustedBy={listing.host.user.trustScore}
                     sqft={listing.sqft}
                     timings={listing.timings}
                     qualifiers={listing.qualifiers}

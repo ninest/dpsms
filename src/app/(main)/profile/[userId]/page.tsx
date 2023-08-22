@@ -115,7 +115,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                             timings={listing.timings}
                             qualifiers={listing.qualifiers}
                             hostClerkId={listing.host.user.clerkId}
-                            hostTrustedBy={listing.host.user.trustedBy.length}
+                            hostTrustedBy={listing.host.user.trustScore}
                             sqft={listing.sqft}
                             numTenancyRequests={listing.tenantRequestListing.length}
                             numTenancies={listing.tenancy.length}
