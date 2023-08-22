@@ -17,10 +17,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment, ReactNode } from "react";
 import TrustForm, { TrustCreateForm } from "./trust-forms";
-import { LucideHeartHandshake } from "lucide-react";
-import { updateTrustAction } from "./trust-actions";
-import { Input } from "@/components/ui/input";
-import { FormLabel } from "@/components/ui/form";
 import { Card } from "@/components/ui/card";
 
 interface Props {
