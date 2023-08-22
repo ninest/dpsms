@@ -94,6 +94,16 @@ export const usersService = {
                 },
               },
             },
+            tenancies: {
+              include: {
+                hostListing: {
+                  include: {
+                    tenantRequestListing: true,
+                  },
+                },
+                moverUsers: true,
+              },
+            },
           },
         },
         moverUser: true,
@@ -103,6 +113,7 @@ export const usersService = {
 
     return {
       id: dbUser.id,
+      clerkId: dbUser.clerkId,
       firstName: clerkUser.firstName,
       lastName: clerkUser.lastName,
       address: dbUser.address,
@@ -110,6 +121,7 @@ export const usersService = {
       hostUser: dbUser.hostUser,
       tenantUser: dbUser.tenantUser,
       moverUser: dbUser.moverUser,
+      tenancies: dbUser.tenantUser?.tenancies,
     };
   },
   async updateUser(
@@ -163,5 +175,73 @@ export const usersService = {
       },
     });
     return Boolean(dbUser?.hostUser?.isActive);
+  },
+
+  async getTrustInfo(userId: string) {
+    const dbUser = await prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      include: {
+        trustedBy: {
+          include: {
+            truster: true,
+          },
+        },
+        trusting: {
+          include: {
+            target: true,
+          },
+        },
+      },
+    });
+    const trustedBy = await Promise.all(
+      dbUser.trustedBy.map(async (trust) => {
+        const clerkUser = await clerkClient.users.getUser(trust.truster.clerkId);
+        return {
+          ...trust,
+          truster: {
+            ...trust.truster,
+            firstName: clerkUser.firstName ?? "",
+            lastName: clerkUser.lastName ?? "",
+          },
+        };
+      })
+    );
+    const trusting = await Promise.all(
+      dbUser.trusting.map(async (trust) => {
+        const clerkUser = await clerkClient.users.getUser(trust.target.clerkId);
+        return {
+          ...trust,
+          target: {
+            ...trust.target,
+            firstName: clerkUser.firstName ?? "",
+            lastName: clerkUser.lastName ?? "",
+          },
+        };
+      })
+    );
+    return {
+      id: dbUser.id,
+      trustedBy,
+      trusting,
+    };
+  },
+
+  async updateTrust(userId: string, targetId: string, amountPercent: number) {
+    await prisma.trust.upsert({
+      where: {
+        trust_unique: {
+          trusterId: userId,
+          targetId,
+        },
+      },
+      update: {
+        amountPercent,
+      },
+      create: {
+        trusterId: userId,
+        targetId,
+        amountPercent,
+      },
+    });
   },
 };
