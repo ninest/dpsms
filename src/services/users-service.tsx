@@ -109,6 +109,7 @@ export const usersService = {
         },
         moverUser: true,
         trustedBy: true,
+        trusting: true,
       },
     });
     const clerkUser = await clerkClient.users.getUser(dbUser.clerkId);
@@ -137,6 +138,7 @@ export const usersService = {
       moverUser: dbUser.moverUser,
       tenancies: dbUser.tenantUser?.tenancies,
       trustScore: calculateTrust(dbUser.trustedBy),
+      trustingScore: calculateTrust(dbUser.trusting),
     };
   },
   async updateUser(
