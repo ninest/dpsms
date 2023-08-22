@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { TrustFormData, trustFormSchema } from "./trust-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateTrustAction } from "./trust-actions";
+import { deleteTrustAction, updateTrustAction } from "./trust-actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,12 @@ export default function TrustForm({ trustTarget, startingPercent }: Props) {
               </FormItem>
             )}
           />
-          <Button type="submit">Update</Button>
+          <div className="flex justify-between">
+            <Button type="submit">Update</Button>
+            <Button type="button" variant={"destructive"} onClick={() => deleteTrustAction(trustTarget)}>
+              Delete
+            </Button>
+          </div>
         </form>
       </Form>
     </>

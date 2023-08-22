@@ -252,4 +252,15 @@ export const usersService = {
       },
     });
   },
+
+  async deleteTrust(userId: string, targetId: string) {
+    await prisma.trust.delete({
+      where: {
+        trust_unique: {
+          trusterId: userId,
+          targetId,
+        },
+      },
+    });
+  },
 };
