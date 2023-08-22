@@ -293,7 +293,7 @@ export default async function UserProfilePage({ children, params }: Props) {
               <Title level={2}>Trusted by</Title>
               <Spacer className="h-3" />
               {trustInfo.trustedBy.length === 0 ? (
-                "No one yet"
+                <Empty>No one trusts you yet</Empty>
               ) : (
                 <>
                   {trustInfo.trustedBy.length} people trust you on average {""}
@@ -315,7 +315,7 @@ export default async function UserProfilePage({ children, params }: Props) {
               <Title level={2}>Trusting</Title>
               <Spacer className="h-3" />
               {trustInfo.trusting.length === 0 ? (
-                "No one yet"
+                <Empty>You trust no one</Empty>
               ) : (
                 <>
                   You trust {trustInfo.trusting.length} people on average {""}
