@@ -7,6 +7,7 @@ import { Spacer } from "@/components/spacer";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/empty";
+import { Tenancy } from "@/components/Tenancy";
 
 export default async function Home() {
   let dbUser;
@@ -18,6 +19,7 @@ export default async function Home() {
   }
 
   const listings = await hostsService.getHostListings();
+  const tenancies = dbUser?.tenancies || [];
 
   const isProfileComplete = clerkId ? await usersService.profileComplete(clerkId) : false;
   const isActiveHost = clerkId ? await usersService.isActiveHost(clerkId) : false;
@@ -83,7 +85,35 @@ export default async function Home() {
         </div>
       </div>
 
-      <Spacer className="h-6" />
+      <Spacer className="h-4" />
+
+      {isAuthenticated && tenancies.length > 0 && (
+        <div>
+          <Title level={2}>My Tenancies</Title>
+
+          <Spacer className="h-2" />
+
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+            {tenancies.map((tenancy) => {
+              return (
+                <div key={tenancy.id}>
+                  <Tenancy
+                    id={tenancy.id}
+                    address={tenancy.hostListing.address}
+                    startTime={tenancy.startTime}
+                    endTime={tenancy.endTime}
+                    sqft={tenancy.sqft}
+                    itemsDescription={tenancy.itemsDescription}
+                    movers={tenancy.moverUsers.map((mover) => mover.userId)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          <Spacer className="h-4" />
+        </div>
+      )}
 
       <div>
         <Title level={2}>Listings</Title>
