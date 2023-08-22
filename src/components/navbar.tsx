@@ -17,7 +17,8 @@ export function Navbar() {
       {/* Goody debugging, don't do this */}
       {/* {JSON.stringify({ user, isLoaded })} */}
       <Link href="/" className="font-extrabold flex items-center space-x-3">
-        <LucideRefrigerator className="w-5" />
+        <LucideRefrigerator className="w-5 mr-2" />
+        Home
         {/* DPSMS */}
       </Link>
       {isLoaded && (
