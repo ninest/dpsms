@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 interface Props {
@@ -16,11 +16,13 @@ interface Props {
 
 export function SearchForm({ defaultAddress }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const form = useForm<SearchFormData>({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
       location: defaultAddress,
-      qualifiers: [],
+      qualifiers: (searchParams.getAll("qualifier") ?? []) as SearchFormData["qualifiers"],
     },
   });
 

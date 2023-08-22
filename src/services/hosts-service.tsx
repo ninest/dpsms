@@ -66,8 +66,10 @@ export const hostsService = {
     });
     return hostListings.map((listing) => ({ ...listing, numTenantsRequested: listing.tenantRequestListing.length }));
   },
-  async searchHostListings(locationQuery: string, options: { qualifiers: string[] }) {
+  async searchHostListings(locationQuery: string, options: { qualifiers: string[] } = { qualifiers: [] }) {
     const coords = await mapboxService.getForwardGeocoding(locationQuery);
+    console.log(`${locationQuery}, ${coords.longitude},${coords.latitude}`);
+    console.log(options);
     const hostListings = await prisma.hostListing.findMany({
       include: {
         host: {
@@ -93,9 +95,11 @@ export const hostsService = {
       const from = point([hl.longitude, hl.latitude]);
       const to = point([coords.longitude, coords.latitude]);
       const distanceBetween = distance(from, to);
+      // console.log(distanceBetween);
       // 2 km radius
       return distanceBetween < 2;
     });
+
     return filteredByCoord;
   },
 

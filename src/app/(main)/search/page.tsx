@@ -36,7 +36,9 @@ export default async function SearchPage({ searchParams }: Props) {
       <Spacer className="h-3" />
 
       <SearchForm defaultAddress={location ?? address} />
+
       <Spacer className="h-3" />
+      
       {hostListings ? (
         <SearchResult
           hostListings={(hostListings ?? []).map((hl) => {
