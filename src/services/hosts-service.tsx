@@ -1,6 +1,7 @@
 import { prisma } from "@/prisma";
 import { mapboxService } from "@/services/mapbox-service";
 import { usersService } from "@/services/users-service";
+import { distance, point } from "@turf/turf";
 
 export const hostsService = {
   async createListing(
@@ -89,8 +90,13 @@ export const hostsService = {
     });
 
     const filteredByCoord = hostListings.filter((hl) => {
-      hl.longitude, hl.latitude;
+      const from = point([hl.longitude, hl.latitude]);
+      const to = point([coords.longitude, coords.latitude]);
+      const distanceBetween = distance(from, to);
+      // 2 km radius
+      return distanceBetween < 2;
     });
+    return filteredByCoord;
   },
 
   async getTenantRequests(hostListingId: string) {
@@ -99,6 +105,21 @@ export const hostsService = {
         hostListingId,
       },
       include: {
+        hostListing: {
+          include: {
+            host: {
+              include: {
+                user: {
+                  include: {
+                    trustedBy: true,
+                  },
+                },
+              },
+            },
+            tenancy: true,
+          },
+        },
+
         tenantRequest: {
           include: {
             tenant: {

@@ -26,8 +26,6 @@ export function SearchForm({ defaultAddress }: Props) {
 
   const onSubmit = form.handleSubmit(async (data) => {
     try {
-      const { latitude, longitude } = await searchLocationAction(data);
-
       const queryParams = new URLSearchParams({
         location: data.location,
       });
@@ -38,7 +36,6 @@ export function SearchForm({ defaultAddress }: Props) {
       // Add the qualifiers string to the query parameters
       // queryParams.append("qualifiers", qualifiersString);
 
-      console.log(`/search?${queryParams}`);
       router.push(`/search?${queryParams}`);
     } catch (error) {
       // Handle error here

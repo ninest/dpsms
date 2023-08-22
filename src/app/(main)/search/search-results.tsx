@@ -1,31 +1,21 @@
-import { HostListing } from "@/types";
+import { ListingCard } from "@/components/ListingCard";
+import { Spacer } from "@/components/spacer";
+import { ComponentProps } from "react";
 
 interface Props {
-  hostListings: HostListing[];
+  hostListings: ComponentProps<typeof ListingCard>[];
 }
 
 export async function SearchResult({ hostListings }: Props) {
-  // Ensure that they meet all the qualifier requirements
-  // Access the database and get all the address latitudes/longitudes
-  // Sort by distance
-  // Display listings in order
-
-  // const sortedListings = hostListings.sort(function ());
-
-  // const sortedListings = hostListings.sort(function ());
-
   return (
-    <div>
-      <div>
-        {/* Loop through host listings and display each */}
+    <>
+      <p className="font-medium text-gray-600">Showing search results within 2 km of the provided address</p>
+      <Spacer className="h-2" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {hostListings.map((listing) => (
-          <div key={listing.id}>
-            <h4>Host Listing</h4>
-            <p>Address: {listing.address}</p>
-            {/* Add other fields you want to display */}
-          </div>
+          <ListingCard key={listing.id} {...listing} />
         ))}
       </div>
-    </div>
+    </>
   );
 }

@@ -28,6 +28,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.4",
+    "@turf/turf": "^6.5.0",
     "@types/node": "^20.5.1",
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
@@ -51,6 +52,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@types/turf": "^3.5.32",
     "ts-node": "^10.9.1"
   }
 }
