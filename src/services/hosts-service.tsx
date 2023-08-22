@@ -1,5 +1,7 @@
 import { prisma } from "@/prisma";
+import { mapboxService } from "@/services/mapbox-service";
 import { usersService } from "@/services/users-service";
+import { distance, point } from "@turf/turf";
 
 export const hostsService = {
   async createListing(
@@ -43,7 +45,10 @@ export const hostsService = {
     });
     return hostListing;
   },
+
   async getHostListings() {
+    // const { qualifiers } = options || {};
+
     const hostListings = await prisma.hostListing.findMany({
       include: {
         host: {
@@ -59,14 +64,72 @@ export const hostsService = {
         tenantRequestListing: true,
       },
     });
-    return hostListings;
+    return hostListings.map((listing) => ({ ...listing, numTenantsRequested: listing.tenantRequestListing.length }));
   },
+  async searchHostListings(locationQuery: string, options: { qualifiers: string[] } = { qualifiers: [] }) {
+    const coords = await mapboxService.getForwardGeocoding(locationQuery);
+    console.log(`${locationQuery}, ${coords.longitude},${coords.latitude}`);
+    console.log(options);
+    const hostListings = await prisma.hostListing.findMany({
+      include: {
+        host: {
+          include: {
+            user: {
+              include: {
+                trustedBy: true,
+              },
+            },
+          },
+        },
+        tenancy: true,
+        tenantRequestListing: true,
+      },
+      where:
+        options.qualifiers.length > 0
+          ? {
+              qualifiers: {
+                hasSome: options.qualifiers,
+              },
+            }
+          : {},
+    });
+
+    const filteredByCoord = hostListings.filter((hl) => {
+      const from = point([hl.longitude, hl.latitude]);
+      const to = point([coords.longitude, coords.latitude]);
+      const distanceBetween = distance(from, to);
+      // console.log(distanceBetween);
+      // 2 km radius
+      return distanceBetween < 2;
+    });
+
+    return {
+      mapUrl: `https://www.google.com/maps/@${coords.latitude},${coords.longitude},15z?entry=ttu`,
+      hostListings: filteredByCoord,
+    };
+  },
+
   async getTenantRequests(hostListingId: string) {
     const tenancyRequest = await prisma.tenantRequestListing.findMany({
       where: {
         hostListingId,
       },
       include: {
+        hostListing: {
+          include: {
+            host: {
+              include: {
+                user: {
+                  include: {
+                    trustedBy: true,
+                  },
+                },
+              },
+            },
+            tenancy: true,
+          },
+        },
+
         tenantRequest: {
           include: {
             tenant: {

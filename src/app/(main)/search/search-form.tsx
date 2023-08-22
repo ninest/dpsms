@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 interface Props {
@@ -15,33 +15,30 @@ interface Props {
 }
 
 export function SearchForm({ defaultAddress }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const form = useForm<SearchFormData>({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
       location: defaultAddress,
-      qualifiers: [],
+      qualifiers: (searchParams.getAll("qualifier") ?? []) as SearchFormData["qualifiers"],
     },
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
     try {
-      const { latitude, longitude } = await searchLocationAction(data);
-
       const queryParams = new URLSearchParams({
-        latitude: latitude,
-        longitude: longitude,
         location: data.location,
       });
+      data.qualifiers.forEach((q) => queryParams.append("qualifier", q));
 
       // Convert the array of qualifiers into a comma-separated string
-      const qualifiersString = data.qualifiers.join(",");
-
+      // const qualifiersString = data.qualifiers.join(",");
       // Add the qualifiers string to the query parameters
-      queryParams.append("qualifiers", qualifiersString);
+      // queryParams.append("qualifiers", qualifiersString);
 
-      const queryString = queryParams.toString();
-      console.log(`/search?${queryString}`);
-      redirect(`http://localhost:3000/search?${queryString}`);
+      router.push(`/search?${queryParams}`);
     } catch (error) {
       // Handle error here
       console.error("An error occurred:", error);
@@ -103,7 +100,7 @@ export function SearchForm({ defaultAddress }: Props) {
             )}
           />
 
-          <Button>Search</Button>
+          <Button className="w-full">Search</Button>
         </form>
       </Form>
     </div>

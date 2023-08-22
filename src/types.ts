@@ -1,3 +1,10 @@
+export interface HostListing {
+  id: string;
+  address: string;
+  timings: string;
+  qualifiers: string[];
+  numTenantsRequested: number;
+}
 export interface TenancyRequest {
   id: string;
   address: string;
