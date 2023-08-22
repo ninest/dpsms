@@ -100,6 +100,7 @@ export default async function Home() {
                   <Tenancy
                     id={tenancy.id}
                     hostListingId={tenancy.hostListingId}
+                    tenantUserId={tenancy.tenant.userId}
                     address={tenancy.hostListing.address}
                     startTime={tenancy.startTime}
                     endTime={tenancy.endTime}

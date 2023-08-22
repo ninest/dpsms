@@ -193,6 +193,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                                   key={t.id}
                                   id={t.id}
                                   hostListingId={t.hostListingId}
+                                  tenantUserId={t.tenant.userId}
                                   address={t.hostListing.address}
                                   startTime={t.startTime}
                                   endTime={t.endTime}
@@ -237,6 +238,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                           key={t.id}
                           id={t.id}
                           hostListingId={t.hostListingId}
+                          tenantUserId={t.tenant.userId}
                           address={t.hostListing.address}
                           startTime={t.startTime}
                           endTime={t.endTime}
@@ -268,6 +270,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                           <Tenancy
                             id={t.id}
                             hostListingId={t.hostListingId}
+                            tenantUserId={t.tenant.userId}
                             address={t.hostListing.address}
                             startTime={t.startTime}
                             endTime={t.endTime}
@@ -368,36 +371,38 @@ export default async function UserProfilePage({ children, params }: Props) {
                 />
               </Card>
             )}
-
-            <Spacer className="h-4" />
-
-            <Title level={2}>Host listings</Title>
-
-            <Spacer className="h-2" />
-
-            {!hostListings?.length ? (
-              <Empty>No host listings</Empty>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {hostListings?.map((listing) => {
-                  return (
-                    <ListingCard
-                      key={listing.id}
-                      id={listing.id}
-                      address={listing.address}
-                      timings={listing.timings}
-                      qualifiers={listing.qualifiers}
-                      hostClerkId={listing.host.user.clerkId}
-                      hostTrustedBy={listing.host.user.trustedBy.length}
-                      sqft={listing.sqft}
-                      numTenancyRequests={listing.tenantRequestListing.length}
-                      numTenancies={listing.tenancy.length}
-                    />
-                  );
-                })}
-              </div>
-            )}
           </div>
+
+          <Spacer className="h-4" />
+
+          <Title level={2}>Host listings</Title>
+
+          <Spacer className="h-2" />
+
+          {!hostListings?.length ? (
+            <div className="max-w-[80ch]">
+              <Empty>No host listings</Empty>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {hostListings?.map((listing) => {
+                return (
+                  <ListingCard
+                    key={listing.id}
+                    id={listing.id}
+                    address={listing.address}
+                    timings={listing.timings}
+                    qualifiers={listing.qualifiers}
+                    hostClerkId={listing.host.user.clerkId}
+                    hostTrustedBy={listing.host.user.trustedBy.length}
+                    sqft={listing.sqft}
+                    numTenancyRequests={listing.tenantRequestListing.length}
+                    numTenancies={listing.tenancy.length}
+                  />
+                );
+              })}
+            </div>
+          )}
         </>
       )}
     </>

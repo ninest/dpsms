@@ -7,6 +7,7 @@ import { ComponentProps } from "react";
 interface Props extends ComponentProps<"div"> {
   id: string;
   hostListingId: string;
+  tenantUserId: string;
   address: string;
   startTime: Date;
   endTime: Date;
@@ -18,6 +19,7 @@ interface Props extends ComponentProps<"div"> {
 export function Tenancy({
   id,
   hostListingId,
+  tenantUserId,
   address,
   startTime,
   endTime,
@@ -27,9 +29,12 @@ export function Tenancy({
   className,
 }: Props) {
   return (
-    <Link href={`/hosts/${hostListingId}`} className={cn("block border rounded-md p-5", className)}>
+    <div className={cn("block border rounded-md p-5", className)}>
       <div>
-        <b>{itemsDescription}</b> at {address}
+        <Link href={`/profile/${tenantUserId}`}>
+          <b>{itemsDescription}</b>
+        </Link>{" "}
+        at <Link href={`/hosts/${hostListingId}`}>{address}</Link>
       </div>
       <Spacer className="h-2" />
       <div className="text-sm">
@@ -50,6 +55,6 @@ export function Tenancy({
         </div>
       </div>
       <Spacer className="h-2" />
-    </Link>
+    </div>
   );
 }

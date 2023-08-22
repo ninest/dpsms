@@ -41,6 +41,11 @@ export const tenancyService = {
             user: true,
           },
         },
+        tenant: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
     return tenancies;

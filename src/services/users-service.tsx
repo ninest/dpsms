@@ -28,8 +28,12 @@ export const usersService = {
                   },
                 },
                 moverUsers: true,
+                tenant: {
+                  include: { user: true },
+                },
               },
             },
+            user: true,
           },
         },
         moverUser: true,
@@ -71,7 +75,15 @@ export const usersService = {
                     },
                   },
                 },
-                tenancy: true,
+                tenancy: {
+                  include: {
+                    tenant: {
+                      include: {
+                        user: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -103,6 +115,11 @@ export const usersService = {
                   },
                 },
                 moverUsers: true,
+                tenant: {
+                  include: {
+                    user: true,
+                  },
+                },
               },
             },
           },

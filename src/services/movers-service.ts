@@ -17,6 +17,11 @@ export const moversService = {
           include: {
             hostListing: true,
             moverUsers: true,
+            tenant: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
       },

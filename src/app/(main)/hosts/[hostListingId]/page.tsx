@@ -1,6 +1,7 @@
 import { acceptTenantRequestListingAction } from "@/app/(main)/host-actions";
 import { TenantForm } from "@/app/(main)/hosts/[hostListingId]/tenant-form";
 import { acceptTenancyRequestListingAction } from "@/app/(main)/tenant-actions";
+import { Tenancy } from "@/components/Tenancy";
 import { Empty } from "@/components/empty";
 import { Spacer } from "@/components/spacer";
 import { TenancyRequest } from "@/components/tenancy-request";
@@ -12,7 +13,7 @@ import { tenantsService } from "@/services/tenants-service";
 import { usersService } from "@/services/users-service";
 import { cn } from "@/utils";
 import { auth } from "@clerk/nextjs";
-import { LucideCheckCircle2, LucideClock, LucideRuler } from "lucide-react";
+import { LucideClock, LucideRuler } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
 
@@ -114,6 +115,31 @@ export default async function HostListingPage({ params }: Props) {
                       </form>
                     )}
                   </div>
+                );
+              })}
+            </div>
+
+            <Spacer className="h-4" />
+
+            <Title level={2}>Tenants</Title>
+
+            <Spacer className="h-3" />
+
+            <div className="space-y-3">
+              {hostListing.tenancy.map((t) => {
+                return (
+                  <Tenancy
+                    key={t.id}
+                    id={t.id}
+                    hostListingId={t.hostListingId}
+                    tenantUserId={t.tenant.userId}
+                    address={hostListing.address}
+                    startTime={t.startTime}
+                    endTime={t.endTime}
+                    sqft={t.sqft}
+                    itemsDescription={t.itemsDescription}
+                    movers={t.moverUsers.map((mu) => mu.userId)}
+                  />
                 );
               })}
             </div>

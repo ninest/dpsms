@@ -42,6 +42,16 @@ export const hostsService = {
             user: true,
           },
         },
+        tenancy: {
+          include: {
+            moverUsers: true,
+            tenant: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
       },
     });
     return hostListing;
