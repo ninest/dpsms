@@ -93,7 +93,7 @@ export default async function Home() {
 
           <Spacer className="h-2" />
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {tenancies.map((tenancy) => {
               return (
                 <div key={tenancy.id}>

@@ -18,6 +18,7 @@ import { notFound } from "next/navigation";
 import { Fragment, ReactNode } from "react";
 import TrustForm, { TrustCreateForm } from "./trust-forms";
 import { Card } from "@/components/ui/card";
+import { round } from "@/utils";
 
 interface Props {
   children: ReactNode;
@@ -35,7 +36,7 @@ export default async function UserProfilePage({ children, params }: Props) {
   // if (!clerkId) return redirectToSignIn();
 
   const user = await usersService.getUserById(params.userId).catch(notFound);
-  const hostListings = user.hostUser?.listings;
+  const hostListings = user.hostUser?.listings ?? [];
 
   const isCurrentUsersPage = clerkId === user.clerkId;
 
@@ -289,16 +290,23 @@ export default async function UserProfilePage({ children, params }: Props) {
               <Title level={2}>Trusted by</Title>
               <Spacer className="h-3" />
               {trustInfo.trustedBy.length === 0 ? (
-                <Empty>No one trusts you yet</Empty>
+                <div className="max-w-[80ch]">
+                  <Empty>No one trusts you yet</Empty>
+                </div>
               ) : (
                 <>
-                  {trustInfo.trustedBy.length} people trust you on average {""}
-                  {trustInfo.trustedBy.reduce((a, b) => a + b.amountPercent, 0) / trustInfo.trustedBy.length}%
+                  <div className="tabular-nums">
+                    {trustInfo.trustedBy.length} people trust you on average {""}
+                    {round(trustInfo.trustedBy.reduce((a, b) => a + b.amountPercent, 0) / trustInfo.trustedBy.length)}%
+                  </div>
+
+                  <Spacer className="h-2" />
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                     {trustInfo.trustedBy.map((t) => (
                       <ProfileCard
                         key={t.id}
-                        id={t.targetId}
+                        id={t.trusterId}
                         firstName={t.truster.firstName ?? ""}
                         lastName={t.truster.lastName ?? ""}
                         trustPercent={t.amountPercent}
@@ -311,11 +319,16 @@ export default async function UserProfilePage({ children, params }: Props) {
               <Title level={2}>Trusting</Title>
               <Spacer className="h-3" />
               {trustInfo.trusting.length === 0 ? (
-                <Empty>You trust no one</Empty>
+                <div className="max-w-[80ch]">
+                  <Empty>You trust no one</Empty>
+                </div>
               ) : (
                 <>
                   You trust {trustInfo.trusting.length} people on average {""}
-                  {trustInfo.trusting.reduce((a, b) => a + b.amountPercent, 0) / trustInfo.trusting.length}%
+                  <span className="tabular-nums">
+                    {round(trustInfo.trusting.reduce((a, b) => a + b.amountPercent, 0) / trustInfo.trusting.length)}%
+                  </span>
+                  <Spacer className="h-2" />
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                     {trustInfo.trusting.map((t) => (
                       <ProfileCard
@@ -336,42 +349,53 @@ export default async function UserProfilePage({ children, params }: Props) {
         </>
       ) : (
         <>
-          <Title level={4}>
+          <p>
             Trusted by {youTrust && "you and"} {otherTrusts} {youTrust && "other"}{" "}
             {otherTrusts === 1 ? "person" : "people"}
-          </Title>
-          {isAuthed && (
-            <Card className="p-5 rounded-md border bg-gray-50">
-              <TrustCreateForm
-                trustTarget={user.id}
-                startingPercent={
-                  youTrust ? trustInfo.trustedBy.find((t) => t.truster.clerkId === clerkId)?.amountPercent : 100
-                }
-              />
-            </Card>
-          )}
-          <Spacer className="h-2" />
-          <Title level={2}>Host listings</Title>
+          </p>
 
           <Spacer className="h-2" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-            {hostListings?.map((listing) => {
-              return (
-                <ListingCard
-                  key={listing.id}
-                  id={listing.id}
-                  address={listing.address}
-                  timings={listing.timings}
-                  qualifiers={listing.qualifiers}
-                  hostClerkId={listing.host.user.clerkId}
-                  hostTrustedBy={listing.host.user.trustedBy.length}
-                  sqft={listing.sqft}
-                  numTenancyRequests={listing.tenantRequestListing.length}
-                  numTenancies={listing.tenancy.length}
+          <div className="max-w-[80ch]">
+            {isAuthed && (
+              <Card className="p-5 rounded-md border bg-gray-50">
+                <TrustCreateForm
+                  trustTarget={user.id}
+                  startingPercent={
+                    youTrust ? trustInfo.trustedBy.find((t) => t.truster.clerkId === clerkId)?.amountPercent : 100
+                  }
                 />
-              );
-            })}
+              </Card>
+            )}
+
+            <Spacer className="h-4" />
+
+            <Title level={2}>Host listings</Title>
+
+            <Spacer className="h-2" />
+
+            {!hostListings?.length ? (
+              <Empty>No host listings</Empty>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {hostListings?.map((listing) => {
+                  return (
+                    <ListingCard
+                      key={listing.id}
+                      id={listing.id}
+                      address={listing.address}
+                      timings={listing.timings}
+                      qualifiers={listing.qualifiers}
+                      hostClerkId={listing.host.user.clerkId}
+                      hostTrustedBy={listing.host.user.trustedBy.length}
+                      sqft={listing.sqft}
+                      numTenancyRequests={listing.tenantRequestListing.length}
+                      numTenancies={listing.tenancy.length}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </div>
         </>
       )}

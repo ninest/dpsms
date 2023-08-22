@@ -46,7 +46,7 @@ export default function TrustForm({ trustTarget, startingPercent }: Props) {
           />
           <div className="flex justify-between">
             <Button type="submit">Update</Button>
-            <Button type="button" variant={"destructive"} onClick={() => deleteTrustAction(trustTarget)}>
+            <Button type="button" variant={"secondary"} onClick={() => deleteTrustAction(trustTarget)}>
               Delete
             </Button>
           </div>

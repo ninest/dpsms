@@ -17,3 +17,7 @@ export function formatDate(date: Date) {
 export function pluralize(count: number, singular: string, plural: string) {
   return count === 1 ? singular : plural;
 }
+
+export function round(number: number) {
+  return Math.round(number);
+}
