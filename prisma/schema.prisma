@@ -61,6 +61,8 @@ model Trust {
   targetId String
 
   amountPercent Int
+
+  @@unique([trusterId, targetId], name: "trust_unique")
 }
 
 model HostListing {
