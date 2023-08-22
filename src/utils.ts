@@ -21,3 +21,7 @@ export function pluralize(count: number, singular: string, plural: string) {
 export function round(number: number) {
   return Math.round(number);
 }
+
+export function calculateTrust(trustScores: { amountPercent: number }[]) {
+  return Math.round(trustScores.reduce((acc, curr) => acc + curr.amountPercent, 0) / trustScores.length);
+}

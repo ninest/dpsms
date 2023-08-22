@@ -1,6 +1,7 @@
 import { prisma } from "@/prisma";
 import { mapboxService } from "@/services/mapbox-service";
 import { usersService } from "@/services/users-service";
+import { calculateTrust } from "@/utils";
 import { distance, point } from "@turf/turf";
 
 export const hostsService = {
@@ -64,7 +65,17 @@ export const hostsService = {
         tenantRequestListing: true,
       },
     });
-    return hostListings.map((listing) => ({ ...listing, numTenantsRequested: listing.tenantRequestListing.length }));
+    return hostListings.map((listing) => ({
+      ...listing,
+      numTenantsRequested: listing.tenantRequestListing.length,
+      host: {
+        ...listing.host,
+        user: {
+          ...listing.host.user,
+          trustScore: calculateTrust(listing.host.user.trustedBy),
+        },
+      },
+    }));
   },
   async searchHostListings(locationQuery: string, options: { qualifiers: string[] } = { qualifiers: [] }) {
     const coords = await mapboxService.getForwardGeocoding(locationQuery);
