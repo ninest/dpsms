@@ -9,14 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/empty";
 
 export default async function Home() {
-  let welcomeMessage = "Welcome to DPSMS!";
   let dbUser;
 
   const { userId: clerkId } = auth();
   const isAuthenticated = !!clerkId;
   if (clerkId) {
     dbUser = await usersService.getUserByClerkId(clerkId);
-    welcomeMessage = `Welcome back, ${dbUser.firstName}!`;
   }
 
   const listings = await hostsService.getHostListings();
@@ -32,9 +30,6 @@ export default async function Home() {
 
   return (
     <main>
-      {/* <div className="flex items-center justify-center mb-4">
-        <Title level={1}>{welcomeMessage}</Title>
-      </div> */}
       <div className="border rounded-md p-6">
         <div className="lg:flex justify-between align-top">
           <div>
