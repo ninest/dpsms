@@ -84,11 +84,14 @@ export const hostsService = {
         tenancy: true,
         tenantRequestListing: true,
       },
-      where: {
-        qualifiers: {
-          hasSome: options.qualifiers,
-        },
-      },
+      where:
+        options.qualifiers.length > 0
+          ? {
+              qualifiers: {
+                hasSome: options.qualifiers,
+              },
+            }
+          : {},
     });
 
     const filteredByCoord = hostListings.filter((hl) => {
@@ -100,7 +103,10 @@ export const hostsService = {
       return distanceBetween < 2;
     });
 
-    return filteredByCoord;
+    return {
+      mapUrl: `https://www.google.com/maps/@${coords.latitude},${coords.longitude},15z?entry=ttu`,
+      hostListings: filteredByCoord,
+    };
   },
 
   async getTenantRequests(hostListingId: string) {

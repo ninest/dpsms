@@ -3,12 +3,11 @@ import { SearchResult } from "@/app/(main)/search/search-results";
 import { Empty } from "@/components/empty";
 import { Spacer } from "@/components/spacer";
 import { Title } from "@/components/typography/title";
+import { Button } from "@/components/ui/button";
 import { hostsService } from "@/services/hosts-service";
-import { mapboxService } from "@/services/mapbox-service";
 import { usersService } from "@/services/users-service";
-import { HostListing } from "@/types";
 import { auth } from "@clerk/nextjs";
-import { Suspense } from "react";
+import { LucideMap } from "lucide-react";
 
 interface Props {
   searchParams: {
@@ -24,9 +23,12 @@ export default async function SearchPage({ searchParams }: Props) {
   const { location, qualifier } = searchParams;
 
   let hostListings = null;
+  let mapUrl = null;
   if (location) {
     const qualifierList = typeof qualifier === "string" ? [qualifier] : qualifier;
-    hostListings = await hostsService.searchHostListings(location, { qualifiers: qualifierList ?? [] });
+    const result = await hostsService.searchHostListings(location, { qualifiers: qualifierList ?? [] });
+    hostListings = result.hostListings;
+    mapUrl = result.mapUrl;
   }
 
   return (
@@ -35,10 +37,23 @@ export default async function SearchPage({ searchParams }: Props) {
 
       <Spacer className="h-3" />
 
-      <SearchForm defaultAddress={location ?? address} />
+      <div className="max-w-[80ch]">
+        <SearchForm defaultAddress={location ?? address} />
 
-      <Spacer className="h-3" />
-      
+        <Spacer className="h-3" />
+        {mapUrl && (
+          <>
+            <Button variant={"secondary"} className="space-x-2" asChild>
+              <a href={mapUrl} target="_blank">
+                <LucideMap className="w-4" /> <span>Open map</span>
+              </a>
+            </Button>
+
+            <Spacer className="h-3" />
+          </>
+        )}
+      </div>
+
       {hostListings ? (
         <SearchResult
           hostListings={(hostListings ?? []).map((hl) => {

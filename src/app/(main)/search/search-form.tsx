@@ -100,7 +100,7 @@ export function SearchForm({ defaultAddress }: Props) {
             )}
           />
 
-          <Button>Search</Button>
+          <Button className="w-full">Search</Button>
         </form>
       </Form>
     </div>
