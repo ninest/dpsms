@@ -17,3 +17,7 @@ export function formatDate(date: Date) {
 export function pluralize(count: number, singular: string, plural: string) {
   return count === 1 ? singular : plural;
 }
+
+export function calculateTrust(trustScores: { amountPercent: number }[]) {
+  return Math.round(trustScores.reduce((acc, curr) => acc + curr.amountPercent, 0) / trustScores.length);
+}

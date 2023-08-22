@@ -115,7 +115,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                             timings={listing.timings}
                             qualifiers={listing.qualifiers}
                             hostClerkId={listing.host.user.clerkId}
-                            hostTrustedBy={listing.host.user.trustedBy.length}
+                            hostTrustedBy={listing.host.user.trustScore}
                             sqft={listing.sqft}
                             numTenancyRequests={listing.tenantRequestListing.length}
                             numTenancies={listing.tenancy.length}
@@ -298,7 +298,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                     {trustInfo.trustedBy.map((t) => (
                       <ProfileCard
                         key={t.id}
-                        id={t.targetId}
+                        id={t.trusterId}
                         firstName={t.truster.firstName ?? ""}
                         lastName={t.truster.lastName ?? ""}
                         trustPercent={t.amountPercent}
