@@ -297,7 +297,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                 <>
                   <div className="tabular-nums">
                     {trustInfo.trustedBy.length} people trust you on average {""}
-                    {round(trustInfo.trustedBy.reduce((a, b) => a + b.amountPercent, 0) / trustInfo.trustedBy.length)}%
+                    {user.trustScore}%
                   </div>
 
                   <Spacer className="h-2" />
@@ -325,9 +325,7 @@ export default async function UserProfilePage({ children, params }: Props) {
               ) : (
                 <>
                   You trust {trustInfo.trusting.length} people on average {""}
-                  <span className="tabular-nums">
-                    {round(trustInfo.trusting.reduce((a, b) => a + b.amountPercent, 0) / trustInfo.trusting.length)}%
-                  </span>
+                  <span className="tabular-nums">{user.trustingScore}%</span>
                   <Spacer className="h-2" />
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                     {trustInfo.trusting.map((t) => (
