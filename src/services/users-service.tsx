@@ -203,7 +203,9 @@ export const usersService = {
     });
     const trustedBy = await Promise.all(
       dbUser.trustedBy.map(async (trust) => {
-        const clerkUser = await clerkClient.users.getUser(trust.truster.clerkId);
+        const clerkUser = await clerkClient.users
+          .getUser(trust.truster.clerkId)
+          .catch(() => ({ firstName: "", lastName: "" }));
         return {
           ...trust,
           truster: {
@@ -216,7 +218,9 @@ export const usersService = {
     );
     const trusting = await Promise.all(
       dbUser.trusting.map(async (trust) => {
-        const clerkUser = await clerkClient.users.getUser(trust.target.clerkId);
+        const clerkUser = await clerkClient.users
+          .getUser(trust.target.clerkId)
+          .catch(() => ({ firstName: "", lastName: "" }));
         return {
           ...trust,
           target: {
