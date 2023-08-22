@@ -16,7 +16,7 @@
     "db:seed": "prisma db seed"
   },
   "prisma": {
-    "seed": "ts-node-esm --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "seed": "tsx prisma/seed.mts"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.23.2",
@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@types/turf": "^3.5.32",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "tsx": "^3.12.7"
   }
 }
