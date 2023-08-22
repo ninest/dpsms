@@ -1,4 +1,4 @@
-import { clerkClient } from "@clerk/nextjs";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
