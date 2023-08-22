@@ -80,14 +80,14 @@ async function main() {
     update: {},
     create: {
       clerkId: parth.id,
-      address: "1 Queen Street",
+      address: "700 Columbus Ave",
       hostUser: {
         create: {
           isActive: true,
           listings: {
             create: [
               {
-                address: "1 Queen Street",
+                address: "700 Columbus Ave",
                 longitude: -71.09293,
                 latitude: 42.33853,
                 timings: "10am - 1pm on weekends",
@@ -106,27 +106,27 @@ async function main() {
                 ],
               },
               {
-                address: "4625 1st Street",
-                longitude: -71.093938,
-                latitude: 42.335533,
+                address: "The Westin Copley Place, Boston",
+                longitude: -71.0774615,
+                latitude: 42.3483206,
                 timings: "24/7 access",
                 sqft: 10000,
                 sizeDescription: "Huge warehouse with lots of space",
                 qualifiers: ["Is dry", "Allows wet items", "Has security", "Is locked", "Can self access"],
               },
               {
-                address: "1234 Water Bottle Avenue",
-                longitude: -71.192938,
-                latitude: 42.238533,
+                address: "Orchard Rd, Singapore",
+                longitude: 103.8296181,
+                latitude: 1.3048205,
                 timings: "8 pm - 8 am",
                 sqft: 50,
                 sizeDescription: "Small closet space that can fit a couple boxes or a person if you're able to fit",
                 qualifiers: ["Has air conditioning", "Is dry", "Has elevator"],
               },
               {
-                address: "1234 Water Bottle Avenue",
-                longitude: -71.192938,
-                latitude: 42.238533,
+                address: "Bayshore Rd, Singapore",
+                longitude: 103.8296181,
+                latitude: 1.3048205,
                 timings: "8 pm - 8 am",
                 sqft: 67,
                 sizeDescription: "Small area in the basement beside the furnace and washing machines",
