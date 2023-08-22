@@ -1,10 +1,12 @@
 import { Spacer } from "@/components/spacer";
 import { cn, formatDate, pluralize } from "@/utils";
 import { LucideBox, LucideClock, LucideRuler } from "lucide-react";
+import Link from "next/link";
 import { ComponentProps } from "react";
 
 interface Props extends ComponentProps<"div"> {
   id: string;
+  hostListingId: string;
   address: string;
   startTime: Date;
   endTime: Date;
@@ -13,9 +15,19 @@ interface Props extends ComponentProps<"div"> {
   movers: string[];
 }
 
-export function Tenancy({ id, address, startTime, endTime, sqft, itemsDescription, movers, className }: Props) {
+export function Tenancy({
+  id,
+  hostListingId,
+  address,
+  startTime,
+  endTime,
+  sqft,
+  itemsDescription,
+  movers,
+  className,
+}: Props) {
   return (
-    <div className={cn("border rounded-md p-5", className)}>
+    <Link href={`/hosts/${hostListingId}`} className={cn("block border rounded-md p-5", className)}>
       <div>
         <b>{itemsDescription}</b> at {address}
       </div>
@@ -38,6 +50,6 @@ export function Tenancy({ id, address, startTime, endTime, sqft, itemsDescriptio
         </div>
       </div>
       <Spacer className="h-2" />
-    </div>
+    </Link>
   );
 }

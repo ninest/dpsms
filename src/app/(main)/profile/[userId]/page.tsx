@@ -192,6 +192,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                                 <Tenancy
                                   key={t.id}
                                   id={t.id}
+                                  hostListingId={t.hostListingId}
                                   address={t.hostListing.address}
                                   startTime={t.startTime}
                                   endTime={t.endTime}
@@ -235,6 +236,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                         <Tenancy
                           key={t.id}
                           id={t.id}
+                          hostListingId={t.hostListingId}
                           address={t.hostListing.address}
                           startTime={t.startTime}
                           endTime={t.endTime}
@@ -265,6 +267,7 @@ export default async function UserProfilePage({ children, params }: Props) {
                         <div key={t.id}>
                           <Tenancy
                             id={t.id}
+                            hostListingId={t.hostListingId}
                             address={t.hostListing.address}
                             startTime={t.startTime}
                             endTime={t.endTime}

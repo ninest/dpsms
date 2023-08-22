@@ -99,6 +99,7 @@ export default async function Home() {
                 <div key={tenancy.id}>
                   <Tenancy
                     id={tenancy.id}
+                    hostListingId={tenancy.hostListingId}
                     address={tenancy.hostListing.address}
                     startTime={tenancy.startTime}
                     endTime={tenancy.endTime}
